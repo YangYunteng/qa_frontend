@@ -14,4 +14,8 @@ module.exports = {
     // 以下代码会使项目运行成功后自动打开浏览器
     // open: true
   },
+
+  transpileDependencies: [
+    'vuetify'
+  ]
 };
