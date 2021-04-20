@@ -1,18 +1,36 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+  <v-app :class="app.backgroundStyle">
+    <HomeNavigation></HomeNavigation>
+    <v-main>
+      <router-view/>
+    </v-main>
+  </v-app>
 </template>
 
 <script>
 // @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+import HomeNavigation from "@/components/Home/HomeNavigation";
 
 export default {
   name: 'Home',
   components: {
-    HelloWorld
+    HomeNavigation
+  },
+  data() {
+    return {
+      app: this.$root.$children[0],
+    }
   }
+
 }
 </script>
+
+<style>
+.darkBg {
+  background: url("../assets/dark_bg.jpg") center fixed !important;
+}
+
+.lightBg {
+  background: url("../assets/light_bg.jpg") center fixed !important;
+}
+</style>

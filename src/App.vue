@@ -1,60 +1,58 @@
 <template>
   <v-app>
-    <v-app-bar
-      app
-      color="primary"
-      dark
-    >
-      <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
-
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
-      </div>
-
-      <v-spacer></v-spacer>
-
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
-    </v-app-bar>
-
-    <v-main>
-      <HelloWorld/>
-    </v-main>
+    <!--  全局overlay 以及snackbar, 用于处理延迟并未用户提示消息  -->
+    <v-overlay :value="overlay" z-index="500">
+      <v-progress-circular indeterminate size="64"></v-progress-circular>
+    </v-overlay>
+    <v-snackbar v-model="showSnackbar" :timeout="2000" :color="snackbarType" top>
+      {{ snackbarMessage }}
+    </v-snackbar>
+    <router-view/>
   </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld';
 
 export default {
   name: 'App',
 
-  components: {
-    HelloWorld,
-  },
+  components: {},
 
   data: () => ({
-    //
+    overlay: false,
+    showSnackbar: false,
+    snackbarMessage: '',
+    snackbarType: '',
   }),
+  computed: {
+    //判断背景色的状态，此处我们只设置了两种类型
+    isDark: function () {
+      return this.$vuetify.theme.dark;
+    },
+    //调整组件在不同背景色下的透明度
+    whiteOpacity: function () {
+      return this.isDark ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.3)';
+    },
+    backgroundStyle: function () {
+      return this.isDark ? 'darkBg' : 'lightBg';
+    }
+  },
+  methods: {
+    //将其与ElementUI进行一个简单的统一，在之后页面如果需要进行提示
+    //可以通过app=this.$root.children[0]锁定到App.vue
+    //使用this.app.message("message",type)进行调用
+    message(message, type) {
+      this.showSnackbar = true;
+      this.snackbarMessage = message;
+      this.snackbarType = type;
+    },
+    //检查token过期
+    updateToken() {
+    }
+  },
+  mounted() {
+    this.updateToken();
+  }
 };
 </script>
+
