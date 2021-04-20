@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div id="navigation">
     <v-app-bar app flat color="rgba(0,0,0,0)">
-      <v-img src="../../assets/logo.png" alt="Logo" max-width="250px" class="d-none d-inline-flex"></v-img>
+      <v-img src="../assets/logo.png" alt="Logo" max-width="250px" class="d-none d-inline-flex"></v-img>
 
       <v-spacer></v-spacer>
 
@@ -14,11 +14,15 @@
         <div class="d-none d-md-flex">{{ app.isDark ? '亮色' : '暗色' }}</div>
       </v-btn>
       <v-btn text>
-        <v-icon>mdi-image-multiple</v-icon>
+        <v-icon>mdi-login</v-icon>
         <div class="d-none d-md-flex">登录</div>
       </v-btn>
       <v-btn text>
-        <v-icon>mdi-login</v-icon>
+        <v-icon>mdi-account-plus</v-icon>
+        <div class="d-none d-md-flex">注册</div>
+      </v-btn>
+      <v-btn text>
+        <v-icon>mdi-logout</v-icon>
         <div class="d-none d-md-flex">登出</div>
       </v-btn>
     </v-app-bar>
@@ -34,6 +38,14 @@ export default {
     }
   },
   methods: {
+    toHome: function () {
+      this.$route.push({
+        path: '/',
+      })
+    },
+    toLogin: function () {
+
+    },
     changeTheme: function () {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
       this.$store.commit('changeTheme', this.$vuetify.theme.dark);

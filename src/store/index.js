@@ -5,6 +5,8 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    token: localStorage.getItem('token') || null,
+    expires: localStorage.getItem('expires') || null,
     themeIsDark: localStorage.getItem('theme') === 'dark',
   },
   mutations: {
