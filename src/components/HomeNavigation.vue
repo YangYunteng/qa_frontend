@@ -17,7 +17,7 @@
         <v-icon>mdi-login</v-icon>
         <div class="d-none d-md-flex">登录</div>
       </v-btn>
-      <v-btn text>
+      <v-btn text @click="goTo('/markdownInput')">
         <v-icon>mdi-account-plus</v-icon>
         <div class="d-none d-md-flex">注册</div>
       </v-btn>
@@ -49,6 +49,9 @@ export default {
     changeTheme: function () {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
       this.$store.commit('changeTheme', this.$vuetify.theme.dark);
+    },
+    goTo(src){
+      this.$router.replace(src)
     }
   }
 }
