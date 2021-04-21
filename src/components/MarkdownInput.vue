@@ -4,10 +4,12 @@
       v-model="content"
       ref="md"
       @change="change"
-      style="min-height: 600px"
+      style="min-height: 300px; margin: 50px;"
     />
+    <div style="text-align: center">
+      <v-btn @click="submit" style="margin: 20px auto;" elevation="2" color="primary" depressed>提交</v-btn>
+    </div>
 
-    <v-btn text @click="submit">提交</v-btn>
   </div>
 </template>
 

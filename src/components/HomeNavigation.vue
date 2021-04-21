@@ -21,7 +21,7 @@
         <v-icon>mdi-account-plus</v-icon>
         <div class="d-none d-md-flex">注册</div>
       </v-btn>
-      <v-btn text>
+      <v-btn text @click="goTo('/problems')">
         <v-icon>mdi-logout</v-icon>
         <div class="d-none d-md-flex">登出</div>
       </v-btn>
