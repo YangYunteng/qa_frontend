@@ -1,44 +1,42 @@
 <template>
-    <v-app-bar fixed>
-      <v-toolbar-title>
-        <v-img max-width="400" height="44" src="../assets/logo.png"></v-img>
-      </v-toolbar-title>
-      <v-toolbar-items>
-        <v-menu
-          v-for="(n, index) in menu"
-          :key="index"
-          open-on-hover
-          offset-y
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn text v-bind="attrs" v-on="on"> {{ n.title }}</v-btn>
-          </template>
+  <v-app-bar app fixed flat color="rgba(0,0,0,0)">
+    <v-img max-width="250px" alt="Logo" src="../assets/logo.png" class="d-none d-inline-flex"></v-img>
+    <v-toolbar-items>
+      <v-menu
+        v-for="(n, index) in menu"
+        :key="index"
+        open-on-hover
+        offset-y
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn text v-bind="attrs" v-on="on"> {{ n.title }}</v-btn>
+        </template>
 
-          <v-list v-if="n.submenu">
-            <v-list-item
-              v-for="(item, index) in n.submenu"
-              :key="index"
-              @click="() => {}"
-            >
-              <v-list-item-title> {{ item.itemTitle }}</v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-menu>
-      </v-toolbar-items>
-    </v-app-bar>
+        <v-list v-if="n.submenu">
+          <v-list-item
+            v-for="(item, index) in n.submenu"
+            :key="index"
+            @click="() => {}"
+          >
+            <v-list-item-title> {{ item.itemTitle }}</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+    </v-toolbar-items>
+  </v-app-bar>
 </template>
 
 <script>
 export default {
   name: "UserHomeNavigation",
-  data(){
+  data() {
     return {
       menu: [
-        { index: "1", title: "首页" },
+        {index: "1", title: "首页"},
         {
           index: "2",
           title: "博客",
-          submenu: [{ itemIndex: "2-1", itemTitle: "消息" }],
+          submenu: [{itemIndex: "2-1", itemTitle: "消息"}],
         },
         {
           index: "3",

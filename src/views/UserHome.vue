@@ -1,9 +1,8 @@
 <template>
-  <v-app>
+  <v-app :class="app.backgroundStyle">
     <UserHomeNavigation></UserHomeNavigation>
     <v-main class="temp">
       <Problems></Problems>
-
     </v-main>
   </v-app>
 </template>
@@ -12,9 +11,17 @@
 import UserHomeNavigation from "@/components/UserHomeNavigation";
 import MarkdownInput from "@/components/MarkdownInput";
 import Problems from "@/components/Problems";
+
 export default {
   name: "UserHome",
-  components:{
+  data() {
+    return {
+      app: this.$root.$children[0],
+    }
+  },
+
+  components: {
+
     UserHomeNavigation,
     // MarkdownInput,
     Problems
@@ -23,7 +30,7 @@ export default {
 </script>
 
 <style scoped>
-.temp{
-  margin-top: 100px;
+.temp {
+  margin-top: 10px;
 }
 </style>
