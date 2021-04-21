@@ -1,20 +1,20 @@
 <template>
   <v-container>
     {{comments.length}}条评论：
-    <v-data-iterator :items="comments"      hide-default-footer>
-      <v-row>
-        <v-col v-for="(item,o) in comments"
+    <v-card outlined style="padding: 20px">
+      <v-data-iterator :items="comments"      hide-default-footer>
+        <v-row v-for="(item,o) in comments"
                :key="o"
                cols="12"
-               sm="12"
-               md="12"
-               lg="12">
-          <b>{{item.commenter}}: </b>{{item.cContent}}
-          <br>
+        >
+          <v-col>
+            <b>{{item.commenter}}: </b>{{item.cContent}}
+          </v-col>
           <v-divider v-if="o+1!==comments.length"></v-divider>
-        </v-col>
-      </v-row>
-    </v-data-iterator>
+        </v-row>
+
+      </v-data-iterator>
+    </v-card>
   </v-container>
 </template>
 

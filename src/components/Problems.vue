@@ -9,19 +9,19 @@
                md="12"
                lg="12">
           <h2>{{item.qTitle}}</h2>
-          <p style="text-overflow: ellipsis; overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2;">
+          <p @click="goTo('/answerDetails')" style="text-overflow: ellipsis; overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2;">
             <b>{{item.answererId}}: </b>{{item.aContent}}
           </p>
           <v-btn tile color="primary">
             <v-icon left>mdi-thumb-up</v-icon>
-            赞同
+            赞同 {{item.likes}}
           </v-btn>
           <v-btn icon class="ma-2" text>
             <v-icon>mdi-thumb-down</v-icon>
           </v-btn>
           <v-btn class="ma-2" text>
             <v-icon left>mdi-comment-multiple-outline</v-icon>
-            查看评论
+            查看评论 {{item.comments}}
           </v-btn>
           <comments :q-id="item.aId"></comments>
           <v-divider></v-divider>
@@ -61,6 +61,11 @@ export default {
         likes: 0,
         comments: 0
       }]
+    }
+  },
+  methods:{
+    goTo(src){
+      this.$router.replace(src)
     }
   }
 }

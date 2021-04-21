@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import MarkdownInput from "@/components/MarkdownInput";
 import Problems from "@/components/Problems";
+import AnswerDetails from "@/components/AnswerDetails";
 
 Vue.use(VueRouter)
 
@@ -21,6 +22,11 @@ const routes = [
     path: '/problems',
     name: 'Problems',
     component: Problems
+  },
+  {
+    path: '/answerDetails',
+    name: 'AnswerDetails',
+    component: AnswerDetails
   },
 ]
 
