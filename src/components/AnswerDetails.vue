@@ -2,7 +2,13 @@
   <v-container>
     <v-banner :sticky="true" elevation="10" style="background-color: white">
       <v-list>
-        <v-list-item><h2>{{question.title}}</h2></v-list-item>
+        <v-list-item><h2>{{question.title}}</h2>
+          <div>
+            <v-btn tile color="primary" @click="goTo('/MarkdownInput')">
+              <v-icon left>mdi-pencil</v-icon>
+              写回答
+            </v-btn>
+          </div></v-list-item>
         <v-list-item><p>{{question.content}}</p></v-list-item>
         <v-list-item>提问者： <b>   {{questioner.username }}   </b><div style="color: gray; font-size: small; margin-left: 20px">{{ questioner.nickname }}</div></v-list-item>
       </v-list>
@@ -95,6 +101,10 @@ export default {
         nickname: "88刺螈"
       }],
       index:0
+    }
+  },methods:{
+    goTo(src){
+      this.$router.replace(src)
     }
   }
 }

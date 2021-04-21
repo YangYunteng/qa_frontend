@@ -17,7 +17,7 @@
         <v-icon>mdi-login</v-icon>
         <div class="d-none d-md-flex">登录</div>
       </v-btn>
-      <v-btn text @click="goTo('/markdownInput')">
+      <v-btn text>
         <v-icon>mdi-account-plus</v-icon>
         <div class="d-none d-md-flex">注册</div>
       </v-btn>
