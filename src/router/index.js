@@ -6,6 +6,11 @@ import Login from "@/views/Login";
 import Register from "@/views/Register";
 import UserHome from "@/views/UserHome";
 import Error from "@/views/Error";
+
+import MarkdownInput from "@/components/MarkdownInput";
+import Problems from "@/components/Problems";
+import AnswerDetails from "@/components/AnswerDetails";
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -36,11 +41,27 @@ const routes = [
     path: '/userHome',
     name: 'UserHome',
     component: UserHome,
-    meta: {
-      requireAuth: true
-    },
+    meta:
+      {
+        requireAuth: true
+      },
     children: []
-  }
+  },
+  {
+    path: '/markdownInput',
+    name: 'MarkdownInput',
+    component: MarkdownInput
+  },
+  {
+    path: '/problems',
+    name: 'Problems',
+    component: Problems
+  },
+  {
+    path: '/answerDetails',
+    name: 'AnswerDetails',
+    component: AnswerDetails
+  },
 ]
 
 const router = new VueRouter({
