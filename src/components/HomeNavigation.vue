@@ -13,11 +13,11 @@
         <v-icon>mdi-image-multiple</v-icon>
         <div class="d-none d-md-flex">{{ app.isDark ? '亮色' : '暗色' }}</div>
       </v-btn>
-      <v-btn text>
+      <v-btn text @click="toLogin">
         <v-icon>mdi-login</v-icon>
         <div class="d-none d-md-flex">登录</div>
       </v-btn>
-      <v-btn text>
+      <v-btn text @click="toRegister">
         <v-icon>mdi-account-plus</v-icon>
         <div class="d-none d-md-flex">注册</div>
       </v-btn>
@@ -39,12 +39,19 @@ export default {
   },
   methods: {
     toHome: function () {
-      this.$route.push({
+      this.$router.push({
         path: '/',
       })
     },
     toLogin: function () {
-
+      this.$router.push({
+        path: '/login'
+      })
+    },
+    toRegister: function () {
+      this.$router.push({
+        path: '/register'
+      })
     },
     changeTheme: function () {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark;

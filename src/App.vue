@@ -48,6 +48,19 @@ export default {
     },
     //检查token过期
     updateToken() {
+      // 如果当前时间大于 expires 中保存的过期时间，
+      // 则直接退出登录
+      if (this.$store.state.token && this.$store.state.expiredAt) {
+        let expiredAt = new Date(this.$store.state.expiredAt);
+        let now = new Date();
+        console.log(expiredAt)
+        if (now >= expiredAt) {
+          this.$store.commit("logout");
+        }
+      }
+      setTimeout(() => {
+        this.updateToken();
+      }, 60000)
     }
   },
   mounted() {
