@@ -50,7 +50,6 @@ export default {
       if (this.$store.state.token && this.$store.state.expiredAt) {
         let expiredAt = new Date(this.$store.state.expiredAt);
         let now = new Date();
-        console.log(expiredAt)
         if (now >= expiredAt) {
           this.$store.commit("logout");
         }
