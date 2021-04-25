@@ -57,9 +57,19 @@ export default {
       setTimeout(() => {
         this.updateToken();
       }, 60000)
-    }
+    },
+    // redirectUserHome() {
+    //   if (this.$store.state.token && this.$store.state.expiredAt) {
+    //     let expiredAt = new Date(this.$store.state.expiredAt);
+    //     let now = new Date();
+    //     if (now < expiredAt) {
+    //       this.$router.replace('/userHome');
+    //     }
+    //   }
+    // }
   },
   mounted() {
+    //this.redirectUserHome();
     this.updateToken();
   }
 };

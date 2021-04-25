@@ -21,10 +21,6 @@
         <v-icon>mdi-account-plus</v-icon>
         <div class="d-none d-md-flex">注册</div>
       </v-btn>
-      <v-btn text @click="goTo('/problems')">
-        <v-icon>mdi-logout</v-icon>
-        <div class="d-none d-md-flex">登出</div>
-      </v-btn>
     </v-app-bar>
   </div>
 </template>
@@ -39,25 +35,32 @@ export default {
   },
   methods: {
     toHome: function () {
-      this.$router.push({
-        path: '/',
-      })
+      if (this.$route.path !== '/'){
+        this.$router.push({
+          path: '/',
+        })
+      }
     },
     toLogin: function () {
-      this.$router.push({
-        path: '/login'
-      })
+      if(this.$route.path!=='login'){
+        this.$router.push({
+          path: '/login'
+        })
+      }
+
     },
     toRegister: function () {
-      this.$router.push({
-        path: '/register'
-      })
+      if(this.$route.path!=='/register'){
+        this.$router.push({
+          path: '/register'
+        })
+      }
     },
     changeTheme: function () {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
       this.$store.commit('changeTheme', this.$vuetify.theme.dark);
     },
-    goTo(src){
+    goTo(src) {
       this.$router.replace(src)
     }
   }
