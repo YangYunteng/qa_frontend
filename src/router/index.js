@@ -6,10 +6,13 @@ import Login from "@/views/Login";
 import Register from "@/views/Register";
 import UserHome from "@/views/UserHome";
 import Error from "@/views/Error";
+import UserHomeWelcome from "@/views/UserHomeWelcome";
 
-import MarkdownInput from "@/components/MarkdownInput";
-import Problems from "@/components/Problems";
-import AnswerDetails from "@/components/AnswerDetails";
+
+import FollowingQuestions from "@/views/FollowingQuestions";
+import HotQuestions from "@/views/HotQuestions";
+import SearchedQuestions from "@/views/SearchedQuestions";
+import QuestionDetails from "@/components/QuestionDetails";
 
 Vue.use(VueRouter)
 
@@ -45,22 +48,34 @@ const routes = [
       {
         requireAuth: true
       },
-    children: []
-  },
-  {
-    path: '/markdownInput',
-    name: 'MarkdownInput',
-    component: MarkdownInput
-  },
-  {
-    path: '/problems',
-    name: 'Problems',
-    component: Problems
-  },
-  {
-    path: '/answerDetails',
-    name: 'AnswerDetails',
-    component: AnswerDetails
+    children: [
+      {
+        path: '',
+        name: 'UserHomeWelcome',
+        component: UserHomeWelcome
+      },
+      {
+        path: 'hotQuestions',
+        name: 'HotQuestions',
+        component: HotQuestions
+      },
+      {
+        path: 'followingQuestions',
+        name: 'FollowingQuestions',
+        component: FollowingQuestions
+      },
+      {
+        path: 'searchedQuestions/:search',
+        name: 'SearchedQuestions',
+        component: SearchedQuestions,
+        props: true
+      }, {
+        path: 'answerDetails/:questionID',
+        name: 'AnswerDetails',
+        component: QuestionDetails,
+        props: true
+      }
+    ]
   },
 ]
 

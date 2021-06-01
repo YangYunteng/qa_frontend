@@ -1,16 +1,14 @@
 <template>
-  <v-app :class="app.backgroundStyle">
+  <v-app :class="app.backgroundStyle" id="UserHome">
     <UserHomeNavigation></UserHomeNavigation>
     <v-main class="temp">
-      <Problems></Problems>
+      <router-view/>
     </v-main>
   </v-app>
 </template>
 
 <script>
 import UserHomeNavigation from "@/components/UserHomeNavigation";
-import MarkdownInput from "@/components/MarkdownInput";
-import Problems from "@/components/Problems";
 
 export default {
   name: "UserHome",
@@ -24,7 +22,9 @@ export default {
 
     UserHomeNavigation,
     // MarkdownInput,
-    Problems
+  },
+  methods: {
+
   }
 }
 </script>

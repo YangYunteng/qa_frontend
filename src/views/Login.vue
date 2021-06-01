@@ -157,7 +157,6 @@ export default {
     next(vm => {
       if (vm.$store.state.token) {
         vm.$router.push('/userHome');
-        vm.app.message('请先退出登录','warning');
       }
     })
   }

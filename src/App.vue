@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app style="overflow: hidden!important;">
     <!--  全局overlay 以及snackbar, 用于处理延迟并未用户提示消息  -->
     <v-overlay :value="overlay" z-index="500">
       <v-progress-circular indeterminate size="64"></v-progress-circular>
