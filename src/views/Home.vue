@@ -2,28 +2,10 @@
   <v-app :class="app.backgroundStyle" id="home">
     <HomeNavigation></HomeNavigation>
     <v-main class="mt-8">
-      <v-container class="mb-12 pb-12">
-        <v-row class="mt-16 mb-16" justify="center">
-          <v-img src="../assets/logo.png"
-                 max-width="80%" data-test="logo"></v-img>
-        </v-row>
-        <v-row align="center" justify="center">
-          <v-col cols="12" md="9">
-            <v-card :color="app.whiteOpacity" class="mt-3" data-test="card">
-              <v-card-title class="display-1 font-weight-light" data-test="title">
-                欢迎来到 Q&A
-              </v-card-title>
-              <v-card-subtitle class="title font-weight-thin" data-test="subtitle">
-                一个强大的论坛
-              </v-card-subtitle>
-              <v-card-text class="headline font-weight-light mt-5">
-                Q&A 是一个神奇的网站。
-                你所感兴趣的，不知道的在这里都可以找到答案
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-container>
+      <MindMap :tag-list-org="tagListOrg" style="width: 700px;
+            height: 500px;
+            margin:50px auto;
+            position: relative;"></MindMap>
     </v-main>
     <HomeFooter></HomeFooter>
   </v-app>
@@ -33,16 +15,28 @@
 // @ is an alias to /src
 import HomeNavigation from "@/components/HomeNavigation";
 import HomeFooter from "@/components/HomeFooter";
+import MindMap from "@/components/MindMap";
 
 export default {
   name: 'Home',
   components: {
     HomeNavigation,
-    HomeFooter
+    HomeFooter,
+    MindMap
   },
   data() {
     return {
       app: this.$root.$children[0],
+      tagListOrg:[{name:'清峪路万镇路', url:'www.baidu.com'},
+        {name:'共和新路彭江路', url:'www.baidu.com'},
+        {name:'淞沪路政立路', url:'www.baidu.com'},
+        {name:'复旦大学', url:'www.baidu.com'},
+        {name:'衡山路高安路', url:'www.baidu.com'},
+        {name:'德平路浦东大道', url:'www.baidu.com'},
+        {name:'上南路昌里路', url:'www.baidu.com'},
+        {name:'高平路交城路', url:'www.baidu.com'},
+        {name:'都市路金都路', url:'www.baidu.com'},
+        {name:'南桥汽车站', url:'www.baidu.com'}]
     }
   }
 
