@@ -1,9 +1,21 @@
 <template>
     <div class="tagCloud"
-         ref="tagCloud">
+         ref="tagCloud"
+          style="text-align:center; width: 700px;
+            height: 500px; position: absolute">
       <a v-for="(item,index) in tagList" :href="item.url" :style="'color:' + item.color + ';top: 0;left: 0;filter:none;'" :key="index">
         {{item.name}}
       </a>
+      <v-text-field
+        class="input"
+        outlined
+        dense
+        placeholder="输入你的问题"
+        append-icon="mdi-magnify"
+        @blur="onUpdate()"
+        v-model="input"
+      >
+      </v-text-field>
     </div>
 </template>
 
@@ -30,14 +42,15 @@ export default {
       mouseY: 0,
       howElliptical: 1,
       oList: null,
-      oA: null,
+      oA: [],
       sa: 0,
       ca: 0,
       sb: 0,
       cb: 0,
       sc: 0,
       cc: 0,
-      paper: null
+      paper: null,
+      input: ''
     }
   },
   methods: {
@@ -143,7 +156,7 @@ export default {
           this.oA[i].style.top = this.mcList[i].cy + t - this.mcList[i].offsetHeight / 2 + 'px';
           this.oA[i].style.fontSize = Math.ceil(12 * this.mcList[i].scale / 2) + 8 + 'px';
           // this.oA[i].style.filter = "alpha(opacity=" + 100 * this.mcList[i].alpha + ")";
-          this.oA[i].style.opacity = this.mcList[i].alpha*0.7+0.3;
+          this.oA[i].style.opacity = this.mcList[i].alpha*0.5+0.5;
         }
       })
     },
@@ -212,6 +225,30 @@ export default {
           this.update()
         }, 10);            // 定时器执行 不能写setInterval(this.update(), 30)
       })
+    },
+
+    onUpdate(){
+      console.log(this.input)
+      this.$axios.post('/question-answer/'+this.input, {
+        question: this.input,
+        limit: 60,
+        threshold: 0.8
+      })
+        .then(resp => {
+          if (resp.status === 200) {
+            let code = resp.data.code;
+            if (code === 200) {
+              console.log(resp.data)
+            } else if (code === 204 || code === 404) {
+              this.app.message('网络连接异常', 'warning');
+            } else {
+              this.app.message('服务器错误', 'red');
+            }
+          }
+        })
+        .catch(() => {
+          this.app.message('登录失败', 'red');
+        })
     }
   },
   created() {
@@ -240,5 +277,10 @@ export default {
   color: #FF0000;
   border: 2px solid white;
 }
-
+.input {
+  width: 25%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+}
+.input:focus-within {
+  width: 50%;
+}
 </style>

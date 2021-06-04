@@ -5,7 +5,10 @@
       <MindMap :tag-list-org="tagListOrg" style="width: 700px;
             height: 500px;
             margin:50px auto;
-            position: relative;"></MindMap>
+            position: relative;">
+      </MindMap>
+
+
     </v-main>
     <HomeFooter></HomeFooter>
   </v-app>
