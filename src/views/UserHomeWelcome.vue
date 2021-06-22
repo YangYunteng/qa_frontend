@@ -3,6 +3,7 @@
     <v-row justify="center" class="mt-12">
       <v-img src="../assets/logo.png" max-width="80%"></v-img>
     </v-row>
+    <mind-map></mind-map>
     <v-row justify="center" class="mt-12">
       <v-col cols="9">
         <v-card :color="app.whiteOpacity">
@@ -20,8 +21,10 @@
 </template>
 
 <script>
+import MindMap from "@/components/MindMap";
 export default {
   name: "UserHomeWelcome",
+  components: {MindMap},
   data() {
     return {
       app: this.$root.$children[0],

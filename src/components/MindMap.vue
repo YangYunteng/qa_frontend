@@ -22,9 +22,6 @@
 <script>
 export default {
   name: "MindMap",
-  props:{
-    tagListOrg: Array
-  },
   data() {
     return {
       tagList: [],
@@ -56,7 +53,7 @@ export default {
   methods: {
     // 生成随机数
     getRandomNum() {
-      return Math.floor(Math.random() * (155 + 1)+50);
+      return Math.floor(Math.random() * (155 + 1) + 50);
     },
     // 三角函数角度计算
     sineCosine(a, b, c) {
@@ -156,7 +153,7 @@ export default {
           this.oA[i].style.top = this.mcList[i].cy + t - this.mcList[i].offsetHeight / 2 + 'px';
           this.oA[i].style.fontSize = Math.ceil(12 * this.mcList[i].scale / 2) + 8 + 'px';
           // this.oA[i].style.filter = "alpha(opacity=" + 100 * this.mcList[i].alpha + ")";
-          this.oA[i].style.opacity = this.mcList[i].alpha*0.5+0.5;
+          this.oA[i].style.opacity = this.mcList[i].alpha * 0.5 + 0.5;
         }
       })
     },
@@ -182,22 +179,18 @@ export default {
       })
     },
     // 网络请求 拿到tagList
-    query() {
-      // 假装从接口拿回来的数据
-      let tagListOrg = this.tagListOrg
-      // 给tagList添加随机颜色
-      tagListOrg.forEach(item => {
-        item.color = "rgb(" + this.getRandomNum() + "," + this.getRandomNum() + "," + this.getRandomNum() + ")";
-      })
-      this.tagList = tagListOrg;
-      this.onReady();
+    async query() {
+      await this.getData();
+      console.log(this.tagList)
+      await this.onReady();
     },
     // 生成标签云
-    onReady() {
+    async onReady() {
       this.$nextTick(() => {
         this.oList = this.$refs.tagCloud;
-        this.paper=document.querySelector(".tagCloud")
-        this.oA = this.oList.getElementsByTagName('a')
+        this.paper = document.querySelector(".tagCloud")
+        this.oA = document.getElementsByTagName('a')
+        console.log(this.oA.length);
         let oTag = null;
         for (let i = 0; i < this.oA.length; i++) {
           oTag = {};
@@ -226,29 +219,45 @@ export default {
         }, 10);            // 定时器执行 不能写setInterval(this.update(), 30)
       })
     },
-
-    onUpdate(){
-      console.log(this.input)
-      this.$axios.post('/question-answer/'+this.input, {
-        question: this.input,
-        limit: 60,
-        threshold: 0.8
-      })
-        .then(resp => {
-          if (resp.status === 200) {
-            let code = resp.data.code;
-            if (code === 200) {
-              console.log(resp.data)
-            } else if (code === 204 || code === 404) {
-              this.app.message('网络连接异常', 'warning');
-            } else {
-              this.app.message('服务器错误', 'red');
-            }
+    async doNext() {
+      this.$nextTick(() => {
+        let temp = [];
+        let data = this.$store.getters.getUserData;
+        data.forEach((item, index) => {
+          if (this.$store.state.token !== null) {
+            temp.push({
+              name: item.title,
+              url: '/userHome/answerDetails/' + item.ID,
+              color: "rgb(" + this.getRandomNum() + "," + this.getRandomNum() + "," + this.getRandomNum() + ")"
+            });
+          } else {
+            temp.push({
+              name: item.title,
+              url: '/',
+              color: "rgb(" + this.getRandomNum() + "," + this.getRandomNum() + "," + this.getRandomNum() + ")"
+            });
           }
-        })
-        .catch(() => {
-          this.app.message('登录失败', 'red');
-        })
+        });
+        this.tagList = temp;
+        //this.$forceUpdate();
+        console.log("data prepared"+this.tagList);
+      })
+    },
+    async getData() {
+      console.log('getData');
+      await this.$axios.get('/hot-list', {
+        limit: 20
+      }).then(async (resp) =>{
+        console.log(resp);
+        if (resp.status === 200) {
+          this.$store.commit('setUserData', resp.data.data);
+          await this.doNext();
+        }
+      })
+    },
+    onUpdate() {
+      console.log(this.input)
+      this.query();
     }
   },
   created() {

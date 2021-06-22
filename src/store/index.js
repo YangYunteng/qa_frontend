@@ -9,6 +9,7 @@ export default new Vuex.Store({
     expiredAt: localStorage.getItem('expiredAt') || null,
     userDetails: JSON.parse(localStorage.getItem('userDetails')) || null,
     themeIsDark: localStorage.getItem('theme') === 'dark',
+    userdata: localStorage.getItem('userdata') ||null
   },
   mutations: {
     login(state, data) {
@@ -36,7 +37,14 @@ export default new Vuex.Store({
       localStorage.setItem('theme', theme);
       state.themeIsDark = isDark;
     },
+    setUserData(state,data){
+      localStorage.setItem('userdata',data);
+      state.userdata = data;
+    }
   },
   actions: {},
-  modules: {}
+  modules: {},
+  getters: {
+    getUserData: state => state.userdata,
+  }
 })
