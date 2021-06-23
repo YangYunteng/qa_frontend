@@ -44,6 +44,7 @@
     <v-card class="mt-8" color="rgb(255,255,255,0.5)">
       <Answers :questionID="questionID" ref="Answers"></Answers>
     </v-card>
+
     <v-dialog
       persistent
       max-width="800px"
@@ -72,6 +73,7 @@
 <script>
 import Answers from "@/components/Answers";
 import MarkdownInput from "@/components/MarkdownInput";
+
 
 export default {
   name: "QuestionDetails",
@@ -111,7 +113,7 @@ export default {
       return true;
     },
     submitAnswer: function () {
-      if (this.app.overlay === true)
+      if (this.app.overlay)
         return;
       let canPost = this.judgeAnswerCanPost();
       if (canPost) {
@@ -126,16 +128,19 @@ export default {
             this.answer = '';
             this.$refs.markdownInput.content = '';
             this.cancelAnswerDialog();
-            this.app.message('回答提交成功', 'success');
+            this.app.message('回答提交成功,正在进行数据库写入,请稍后查询', 'success');
+            this.$refs.Answers.queryAnswers();
           } else {
             this.app.message("回答提交失败", 'warning');
           }
+          this.app.overlay = false;
         }).catch(err => {
           this.app.message('服务器在忙', 'red');
         })
-        this.app.overlay = false;
+
       }
     },
+
     getTime(date) {
       date = new Date(date);
       let res = '';
@@ -205,6 +210,15 @@ export default {
         this.app.message("服务器在忙", 'red');
       })
     },
+    sleep: function (NumMillis) {
+      let nowTime = new Date();
+      let exitTime = nowTime.getTime() + NumMillis;
+      for (; ;) {
+        let now = new Date();
+        if (now.getTime() > exitTime)
+          return;
+      }
+    }
   },
 
   props: ['questionID'],

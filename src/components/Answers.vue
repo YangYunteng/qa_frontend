@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <b class="text-h7 ml-2">{{ total }} 条回答：</b>
+    <b class="text-h7 ml-2">{{ answerTotal }} 条回答：</b>
     <v-card v-for="(item,index) in answers" :key="index" color="rgb(255,255,255,0.6)" class="mt-2" outlined
             min-height="50px">
       <v-row>
@@ -10,33 +10,36 @@
         <v-spacer></v-spacer>
         <v-col cols="2">
           {{ item.likesCount }}
-          <v-tooltip bottom>
+          <v-tooltip bottom v-if="!item.isLiked">
             <template v-slot:activator="{ on, attrs }">
               <v-icon color="black" dark v-bind="attrs" v-on="on"
-                      v-if="!item.isLiked" @click="likeAnswer(item.ID)" style="cursor: pointer">
+                      @click="likeAnswer(item.ID,index,0)" style="cursor: pointer">
                 mdi-heart-outline
               </v-icon>
             </template>
             <span>点赞</span>
           </v-tooltip>
-          <v-tooltip bottom>
+
+          <v-tooltip bottom v-if="item.isLiked">
             <template v-slot:activator="{ on, attrs }">
               <v-icon color="red" v-bind="attrs" v-on="on"
-                      v-if="!item.isLiked" @click="cancelLikeAnswer(item.ID)" style="cursor: pointer">
+                      @click="cancelLikeAnswer(item.ID,index,0)" style="cursor: pointer">
                 mdi-cards-heart
               </v-icon>
             </template>
             <span>取消点赞</span>
           </v-tooltip>
+
           <v-tooltip bottom v-if="canDelete(item.answererID)">
             <template v-slot:activator="{ on, attrs }">
               <v-icon color="primary" dark v-bind="attrs" v-on="on"
-                      @click="deleteAnswer(item.ID)" style="cursor: pointer">
+                      @click="deleteAnswer(item.ID,index)" style="cursor: pointer">
                 mdi-delete
               </v-icon>
             </template>
             <span>删除</span>
           </v-tooltip>
+
           <v-tooltip bottom v-if="canDelete(item.answererID)">
             <template v-slot:activator="{ on, attrs }">
               <v-icon color="primary" dark v-bind="attrs" v-on="on"
@@ -47,6 +50,7 @@
             </template>
             <span>修改</span>
           </v-tooltip>
+
         </v-col>
       </v-row>
       <v-row style="margin-top: -20px" class="justify-center">
@@ -57,8 +61,8 @@
       <v-row style="margin-top: -20px">
         <v-col cols="3">{{ getTime(item.UpdatedAt) }}</v-col>
         <v-col>
-          <v-chip @click="openCommentDialog(item)">
-            33 评论
+          <v-chip @click="openCommentDialog(index)">
+            查看评论
           </v-chip>
         </v-col>
       </v-row>
@@ -71,27 +75,6 @@
         @input="queryAnswers"
       ></v-pagination>
     </div>
-
-    <!--  修改回答的Dialog  -->
-    <v-dialog transition="dialog-bottom-transition" v-model="isModifyAnswerDialogOn" width="600px" persistent>
-      <v-card>
-        <v-toolbar
-          color="primary"
-          dark
-        >修改答案
-        </v-toolbar>
-        <v-card-text class="mt-5">
-          <MarkdownInput @transformHtml="receiveModifyAnswerHtml" ref="modifyAnswerMarkdownInput"
-                         placeholder="你的答案..."></MarkdownInput>
-        </v-card-text>
-        <v-card-actions class="justify-end">
-          <v-btn class="mb-4 mr-4" elevation="2" color="primary" depressed @click="submitModifyAnswer">提交</v-btn>
-          <v-btn class="mb-4 mr-4" elevation="2" color="primary" depressed @click="closeModifyAnswerDialog">取消
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
     <!-- 评论Dialog, 显示该问题的所有评论-->
     <v-dialog width="800px" v-model="isCommentDialogOn">
       <template>
@@ -102,6 +85,7 @@
           >回答详情
           </v-toolbar>
           <v-card-text>
+            <!--    关于回答本身的一个变化        -->
             <v-row>
               <v-col cols="5">
                 <b style="color: black">{{ answer.answererNickname }}: </b>
@@ -109,20 +93,20 @@
               <v-spacer></v-spacer>
               <v-col cols="2">
                 {{ answer.likesCount }}
-                <v-tooltip bottom>
+                <v-tooltip bottom v-if="!answer.isLiked">
                   <template v-slot:activator="{ on, attrs }">
                     <v-icon color="black" v-bind="attrs" v-on="on"
-                            v-if="!answer.isLiked" @click="likeAnswer(answer.ID)"
+                            @click="likeAnswer(answer.ID,answerIndex,1)"
                             style="cursor: pointer">
                       mdi-heart-outline
                     </v-icon>
                   </template>
                   <span>点赞</span>
                 </v-tooltip>
-                <v-tooltip bottom>
+                <v-tooltip bottom v-if="answer.isLiked">
                   <template v-slot:activator="{ on, attrs }">
                     <v-icon color="red" v-bind="attrs" v-on="on"
-                            v-if="!answer.isLiked" @click="cancelLikeAnswer(answer.ID)"
+                            @click="cancelLikeAnswer(answer.ID,answerIndex,1)"
                             style="cursor: pointer">
                       mdi-cards-heart
                     </v-icon>
@@ -142,25 +126,24 @@
               <v-card style="color: black" v-for="(item,index) in this.comments" :key="index">
                 <v-row>
                   <v-col cols="4">
-                    {{ item.fromNickname }} to {{ item.toNickName }}
+                    来自 {{ item.toNickName }}
                   </v-col>
                   <v-spacer></v-spacer>
                   <v-col cols="4">
                     {{ item.likesCount }}
-                    <v-tooltip bottom>
+                    <v-tooltip bottom v-if="!item.isLiked">
                       <template v-slot:activator="{ on, attrs }">
                         <v-icon color="black" v-bind="attrs" v-on="on"
-                                v-if="!item.isLiked" @click="likeComment(item.ID)"
-                                style="cursor: pointer">
+                                @click="likeComment(item.ID,index)">
                           mdi-heart-outline
                         </v-icon>
                       </template>
                       <span>点赞</span>
                     </v-tooltip>
-                    <v-tooltip bottom>
+                    <v-tooltip bottom v-if="item.isLiked">
                       <template v-slot:activator="{ on, attrs }">
                         <v-icon color="red" v-bind="attrs" v-on="on"
-                                v-if="!item.isLiked" @click="cancelLikeComment(item.ID)"
+                                @click="cancelLikeComment(item.ID,index)"
                                 style="cursor: pointer">
                           mdi-cards-heart
                         </v-icon>
@@ -206,6 +189,26 @@
         </v-card>
       </template>
     </v-dialog>
+    <!--  修改回答的Dialog  -->
+    <v-dialog transition="dialog-bottom-transition" v-model="isModifyAnswerDialogOn" width="600px" persistent>
+      <v-card>
+        <v-toolbar
+          color="primary"
+          dark
+        >修改答案
+        </v-toolbar>
+        <v-card-text class="mt-5">
+          <MarkdownInput @transformHtml="receiveModifyAnswerHtml" ref="modifyAnswerMarkdownInput"
+                         placeholder="你的答案..."></MarkdownInput>
+        </v-card-text>
+        <v-card-actions class="justify-end">
+          <v-btn class="mb-4 mr-4" elevation="2" color="primary" depressed @click="submitModifyAnswer">提交</v-btn>
+          <v-btn class="mb-4 mr-4" elevation="2" color="primary" depressed @click="closeModifyAnswerDialog">取消
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
 
     <!-- 对回答和评论进行评论的Dialog -->
     <v-dialog transition="dialog-bottom-transition" v-model="isCommentToDialogOn" width="600px" persistent>
@@ -240,11 +243,13 @@ export default {
       app: this.$root.$children[0],
       total: 7,
       isCommentDialogOn: false,
+      answerTotal: 0,
       answerPage: 1,
       answerPageSize: 5,
-      answerPaginationLen: 2,
-      answer: {},
+      answerPaginationLen: 1,
+      answerIndex: -1,
       answers: [],
+      answer: {},
 
       isCommentToDialogOn: false,
       commentTo: '',
@@ -262,7 +267,6 @@ export default {
     }
   },
   methods: {
-
     canDelete(id) {
       return id === this.$store.state.userDetails.ID;
     },
@@ -281,7 +285,7 @@ export default {
         if (resp.data.code === 200) {
           this.closeModifyAnswerDialog();
           this.$set(this.answers[this.modifyAnswerIndex], 'content', this.modifyAnswerContent);
-          this.modifyAnswerContent = '';
+          this.modifyAnswerContent = '  ';
           this.$refs.modifyAnswerMarkdownInput.content = '';
           this.app.message('评论修改成功', 'success');
         } else {
@@ -300,7 +304,6 @@ export default {
     closeModifyAnswerDialog: function () {
       this.isModifyAnswerDialogOn = false;
     },
-
 
     getTime: function (date) {
       date = new Date(date);
@@ -323,30 +326,36 @@ export default {
       return timeElement;
     },
 
-    openCommentDialog(item) {
-      this.answer = item;
+    openCommentDialog(index) {
+      this.answerIndex = index;
+      this.answer = this.answers[index];
       this.isCommentDialogOn = true;
       this.queryComments();
-      console.log(this.comments);
-      console.log(this.commentTotal !== 0)
     },
 
-    deleteAnswer(id) {
+    deleteAnswer(id, index) {
+      if (this.app.overlay)
+        return;
       let path = '/answers/' + id;
       this.app.overlay = true;
       this.$axios.delete(path, {}).then(resp => {
-        console.log(resp);
         if (resp.data.code === 200) {
-          this.queryAnswers()
+          this.app.message("删除成功,正在清除数据,请在一段时间后查询", 'success');
+          // this.sleep(1000);
+          this.answers.splice(index, 1);
+        } else {
+          this.app.message("已经删除，正在清理数据", 'red');
         }
+        this.queryAnswers();
+        this.app.overlay = false;
       }).catch(() => {
         this.app.message('服务器在忙', 'red');
       })
-      this.app.overlay = false;
     },
 
     queryAnswers: function () {
       let path = '/questions/' + this.questionID + '/answers';
+      this.app.overlay = true;
       this.$axios.get(path, {
         params: {
           pageNum: this.answerPage,
@@ -355,6 +364,8 @@ export default {
         }
       }).then(resp => {
         if (resp.data.code === 200) {
+          this.answerTotal = resp.headers.totalcount;
+          this.answerPaginationLen = Math.ceil(this.answerTotal / this.answerPageSize);
           let answers = resp.data.data;
           let answersIDs = [];
           let temp = '';
@@ -362,20 +373,13 @@ export default {
             answersIDs.push(answers[i].ID);
             answers[i].content = '   ' + answers[i].content;
             answers[i].answererNickname = answers[i].answerer.nickname;
-            let path = '/answers/' + answers[i].ID + '/likes';
-            this.$axios.get(path, {}).then(resp => {
-              if (resp.data.code === 200) {
-                answers[i].isLiked = resp.data.data;
-              } else {
-                answers[i].isLiked = false;
-              }
-            }).catch(() => {
-              this.app.message('服务器在忙', 'red')
-            })
             delete answers[i].answerer;
           }
-          console.log(answers)
           this.answers = answers;
+          for (let i = 0; i < answers.length; i++) {
+            let path = '/answers/' + answers[i].ID + '/likes';
+            this.getAnswerIsLiked(path, {}, i);
+          }
           temp = answersIDs.join(',')
           this.$axios.get('/answers/likes/counts', {
             params: {
@@ -385,41 +389,70 @@ export default {
             if (resp.data.code === 200) {
               let answerLikesCounts = resp.data.data;
               for (let i = 0; i < answers.length; i++) {
-                //answers[i].likesCount = answerLikesCounts[i];
                 this.$set(this.answers[i], 'likesCount', answerLikesCounts[i]);
               }
             }
           }).catch(() => {
-            console.log("服务器在忙", 'red');
+            this.app.message("服务器在忙", 'red');
           })
+        }
+        this.app.overlay = false;
+      }).catch(() => {
+        this.app.message('服务器在忙', 'red');
+      })
+    },
+
+    async getAnswerIsLiked(url, params, index) {
+      return await this.$axios.get(url, params).then(resp => {
+        if (resp.data.code === 200) {
+          this.$set(this.answers[index], 'isLiked', resp.data.data);
+        } else {
+          this.$set(this.answers[index], 'isLiked', false);
         }
       }).catch(() => {
         this.app.message('服务器在忙', 'red');
       })
     },
 
-    likeAnswer: function (answerID) {
+    likeAnswer: function (answerID, index, type) {
       let path = '/answers/' + answerID + '/likes';
+      this.app.overlay = true;
       this.$axios.post(path, {}).then(resp => {
-        console.log(resp);
         if (resp.data.code === 200) {
-          this.$set(this.answers, 'isLiked', true);
+          let answer = this.answers[index];
+          answer.isLiked = true;
+          answer.likesCount = answer.likesCount + 1;
+          this.answers.splice(index, 1, answer);
+          if (type === 1) {
+            this.answer = this.answers[index];
+          }
         }
       }).catch(() => {
         this.app.message('服务器在忙', 'red');
       })
+      this.app.overlay = false;
     },
-    cancelLikeAnswer: function (answerID) {
+
+    cancelLikeAnswer: function (answerID, index, type) {
       let path = '/answers/' + answerID + '/likes';
+      this.app.overlay = true;
       this.$axios.delete(path, {}).then(resp => {
-        console.log(resp);
         if (resp.data.code === 200) {
-          this.$set(this.answers, 'isLiked', false);
+          let answer = this.answers[index];
+          answer.isLiked = false;
+          if (answer.likesCount > 0)
+            answer.likesCount = answer.likesCount - 1;
+          this.answers.splice(index, 1, answer);
+          if (type === 1) {
+            this.answer = this.answers[index];
+          }
         }
       }).catch(() => {
         this.app.message('服务器在忙', 'red');
       })
+      this.app.overlay = false;
     },
+
     openCommentToDialog: function (to_id) {
       this.commentTo = to_id;
       this.isCommentToDialogOn = true;
@@ -429,62 +462,58 @@ export default {
     },
 
     submitComment: function () {
+      if (this.app.overlay)
+        return;
       if (this.commentContent === '') {
         this.app.message('评论内容不能为空', 'warning');
         return;
       }
       let path = '/answers/' + this.answer.ID + '/comments';
+      this.app.overlay = true;
       this.$axios.post(path, {
         content: this.commentContent,
         to_id: this.commentTo
       }).then(resp => {
-        //console.log(resp);
         if (resp.data.code === 200) {
           this.commentContent = '';
+          this.app.message("评论提交成功，正在写入数据库,请在一段时候查询", 'success');
+          this.sleep(1000);
           this.queryComments();
           this.closeCommentToDialog();
         }
+        this.app.overlay = false;
       }).catch(() => {
         this.app.message('服务器在忙', 'red');
       })
-
     },
 
     queryComments: function () {
       let path = '/answers/' + this.answer.ID + '/comments';
+      this.app.overlay = true;
       this.$axios.get(path, {
         params: {
           pageNum: this.commentPage,
           pageSize: this.commentPageSize,
+          orderBy: 'created_at asc',
         }
       }).then(resp => {
         if (resp.data.code === 200) {
           this.commentTotal = resp.headers.totalcount;
           this.commentPaginationLen = Math.ceil(this.commentTotal / this.commentPageSize);
-          console.log(this.commentPaginationLen);
           let comments = resp.data.data;
           let commentIDs = [];
           for (let i = 0; i < comments.length; i++) {
             commentIDs.push(comments[i].ID);
             comments[i].fromNickname = comments[i].from.nickname;
             comments[i].toNickName = comments[i].to.nickname;
-            path = '/comments/' + comments[i].ID + '/likes';
-            this.$axios.get(path, {}).then(resp => {
-              //console.log(resp);
-              if (resp.data.code === 200) {
-                comments[i].isLiked = resp.data.data;
-              } else {
-                comments[i].isLiked = false;
-              }
-            }).catch(() => {
-              this.app.message('服务器在忙', 'red');
-            })
             delete comments[i].from;
             delete comments[i].to;
           }
           this.comments = comments;
-          // console.log(this.comments);
-          this.commentTotal = comments.length
+          for (let i = 0; i < this.comments.length; i++) {
+            path = '/comments/' + comments[i].ID + '/likes';
+            this.getCommentIsLiked(path, {}, i);
+          }
           let temp = commentIDs.join(',');
           path = '/comments/likes/counts';
           this.$axios.get(path, {
@@ -492,7 +521,6 @@ export default {
               "comment-ids": temp
             }
           }).then(resp => {
-            // console.log(resp);
             if (resp.data.code === 200) {
               let commentLikesCount = resp.data.data;
               for (let i = 0; i < this.comments.length; i++) {
@@ -503,27 +531,60 @@ export default {
             this.app.message('服务器在忙', 'red');
           })
         }
+        this.app.overlay = false;
+      }).catch(() => {
+        this.app.message('服务器在忙', 'red');
+      })
+    },
+    async getCommentIsLiked(url, params, index) {
+      return await this.$axios.get(url, params).then(resp => {
+        if (resp.data.code === 200) {
+          this.$set(this.comments[index], 'isLiked', resp.data.data);
+        } else {
+          this.$set(this.comments[index], 'isLiked', false);
+        }
       }).catch(() => {
         this.app.message('服务器在忙', 'red');
       })
     },
     likeComment: function (id, index) {
       let path = '/comments/' + id + '/likes';
+      this.app.overlay = true;
       this.$axios.post(path, {}).then(resp => {
-        // console.log(resp);
         if (resp.data.code === 200) {
-          this.$set(this.comments[index], 'likesCount', this.comments[index] + 1);
+          let comment = this.comments[index];
+          comment.isLiked = true;
+          comment.likesCount = comment.likesCount + 1;
+          this.comments.splice(index, 1, comment);
         }
+        if(resp.data.code===500){
+          this.app.message("该评论已删除",'warning');
+        }
+        this.app.overlay = false;
       }).catch(() => {
         this.app.message('服务器在忙', 'red');
       })
     },
+
+    isCommentLikeAxios: function (id) {
+      let path = '/comments/' + id + '/likes';
+      return this.$axios({
+        url: path,
+        method: 'get',
+        params: {}
+      })
+    },
+
+
     cancelLikeComment: function (id, index) {
       let path = '/comments/' + id + '/likes';
-      this.$axios.post(path, {}).then(resp => {
-        console.log(resp);
+      this.$axios.delete(path, {}).then(resp => {
         if (resp.data.code === 200) {
-          this.$set(this.comments[index], 'likesCount', this.comments[index] - 1);
+          let comment = this.comments[index];
+          comment.isLiked = false;
+          if (comment.likesCount > 0)
+            comment.likesCount = comment.likesCount - 1;
+          this.comments.splice(index, 1, comment);
         }
       }).catch(() => {
         this.app.message('服务器在忙', 'red');
@@ -534,7 +595,6 @@ export default {
       let path = '/comments/' + id;
       this.app.overlay = true;
       this.$axios.delete(path, {}).then(resp => {
-        console.log(resp);
         if (resp.data.code === 200) {
           this.app.message('评论删除成功', 'success');
           this.$set(this.comments[index], 'content', undefined);
@@ -547,6 +607,15 @@ export default {
       })
       this.app.overlay = false;
     },
+    sleep: function (NumMillis) {
+      let nowTime = new Date();
+      let exitTime = nowTime.getTime() + NumMillis;
+      for (; ;) {
+        let now = new Date();
+        if (now.getTime() > exitTime)
+          return;
+      }
+    }
   }
 }
 </script>

@@ -21,7 +21,7 @@
       </v-row>
       <v-row class="d-flex">
         <v-spacer></v-spacer>
-        <v-col cols="4">
+        <v-col cols="5">
           <v-btn color="primary" dark class="ml-3" @click="toAnswerDetails(item.ID)">
             <v-icon left>mdi-pencil</v-icon>
             写回答
@@ -39,6 +39,10 @@
           <v-btn class="ml-3" color="success" @click="toAnswerDetails(item.ID)">
             <v-icon left>mdi-comment-multiple-outline</v-icon>
             查看详情
+          </v-btn>
+          <v-btn class="ml-3" color="error" v-if="canDelete(item.questionerID)" @click="toAnswerDetails(item.ID)">
+            <v-icon left>mdi-delete</v-icon>
+            删除
           </v-btn>
         </v-col>
       </v-row>
@@ -65,10 +69,12 @@ export default {
     transferData: function (questions) {
       this.questions = questions;
     },
-
+    canDelete(id) {
+      return id === this.$store.state.userDetails.ID;
+    },
     toAnswerDetails: function (questionID) {
       this.$router.push({
-        name: 'AnswerDetails',
+        name: 'QuestionDetails',
         params: {
           questionID: questionID
         }
@@ -85,11 +91,12 @@ export default {
         this.app.message('服务器在忙', 'red');
       })
     },
+    deleteQuestion(questionID) {
 
+    },
     cancelFollowQuestion(questionID, index) {
       let path = '/questions/' + questionID + '/follows';
       this.$axios.delete(path, {}).then(resp => {
-        console.log(resp);
         if (resp.data.code === 200) {
           this.$set(this.questions[index], 'isFollowed', false);
         }

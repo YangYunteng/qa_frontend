@@ -70,8 +70,8 @@ const routes = [
         component: SearchedQuestions,
         props: true
       }, {
-        path: 'answerDetails/:questionID',
-        name: 'AnswerDetails',
+        path: 'questionDetails/:questionID',
+        name: 'QuestionDetails',
         component: QuestionDetails,
         props: true
       }
