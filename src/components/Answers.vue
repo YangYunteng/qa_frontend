@@ -277,7 +277,7 @@ export default {
     },
 
     submitModifyAnswer: function () {
-      let path = '/answers/' + this.modifyAnswer.ID;
+      let path = '/userServer/answers/' + this.modifyAnswer.ID;
       this.app.overlay = true;
       this.$axios.put(path, {
         content: this.modifyAnswerContent,
@@ -336,7 +336,7 @@ export default {
     deleteAnswer(id, index) {
       if (this.app.overlay)
         return;
-      let path = '/answers/' + id;
+      let path = '/userServer/answers/' + id;
       this.app.overlay = true;
       this.$axios.delete(path, {}).then(resp => {
         if (resp.data.code === 200) {
@@ -354,7 +354,7 @@ export default {
     },
 
     queryAnswers: function () {
-      let path = '/questions/' + this.questionID + '/answers';
+      let path = '/userServer/questions/' + this.questionID + '/answers';
       this.app.overlay = true;
       this.$axios.get(path, {
         params: {
@@ -377,11 +377,11 @@ export default {
           }
           this.answers = answers;
           for (let i = 0; i < answers.length; i++) {
-            let path = '/answers/' + answers[i].ID + '/likes';
+            let path = '/userServer/answers/' + answers[i].ID + '/likes';
             this.getAnswerIsLiked(path, {}, i);
           }
           temp = answersIDs.join(',')
-          this.$axios.get('/answers/likes/counts', {
+          this.$axios.get('/userServer/answers/likes/counts', {
             params: {
               "answer-ids": temp
             }
@@ -415,7 +415,7 @@ export default {
     },
 
     likeAnswer: function (answerID, index, type) {
-      let path = '/answers/' + answerID + '/likes';
+      let path = '/userServer/answers/' + answerID + '/likes';
       this.app.overlay = true;
       this.$axios.post(path, {}).then(resp => {
         if (resp.data.code === 200) {
@@ -434,7 +434,7 @@ export default {
     },
 
     cancelLikeAnswer: function (answerID, index, type) {
-      let path = '/answers/' + answerID + '/likes';
+      let path = '/userServer/answers/' + answerID + '/likes';
       this.app.overlay = true;
       this.$axios.delete(path, {}).then(resp => {
         if (resp.data.code === 200) {
@@ -468,7 +468,7 @@ export default {
         this.app.message('评论内容不能为空', 'warning');
         return;
       }
-      let path = '/answers/' + this.answer.ID + '/comments';
+      let path = '/userServer/answers/' + this.answer.ID + '/comments';
       this.app.overlay = true;
       this.$axios.post(path, {
         content: this.commentContent,
@@ -488,7 +488,7 @@ export default {
     },
 
     queryComments: function () {
-      let path = '/answers/' + this.answer.ID + '/comments';
+      let path = '/userServer/answers/' + this.answer.ID + '/comments';
       this.app.overlay = true;
       this.$axios.get(path, {
         params: {
@@ -511,11 +511,11 @@ export default {
           }
           this.comments = comments;
           for (let i = 0; i < this.comments.length; i++) {
-            path = '/comments/' + comments[i].ID + '/likes';
+            path = '/userServer/comments/' + comments[i].ID + '/likes';
             this.getCommentIsLiked(path, {}, i);
           }
           let temp = commentIDs.join(',');
-          path = '/comments/likes/counts';
+          path = '/userServer/comments/likes/counts';
           this.$axios.get(path, {
             params: {
               "comment-ids": temp
@@ -548,7 +548,7 @@ export default {
       })
     },
     likeComment: function (id, index) {
-      let path = '/comments/' + id + '/likes';
+      let path = '/userServer/comments/' + id + '/likes';
       this.app.overlay = true;
       this.$axios.post(path, {}).then(resp => {
         if (resp.data.code === 200) {
@@ -567,7 +567,7 @@ export default {
     },
 
     isCommentLikeAxios: function (id) {
-      let path = '/comments/' + id + '/likes';
+      let path = '/userServer/comments/' + id + '/likes';
       return this.$axios({
         url: path,
         method: 'get',
@@ -577,7 +577,7 @@ export default {
 
 
     cancelLikeComment: function (id, index) {
-      let path = '/comments/' + id + '/likes';
+      let path = '/userServer/comments/' + id + '/likes';
       this.$axios.delete(path, {}).then(resp => {
         if (resp.data.code === 200) {
           let comment = this.comments[index];
@@ -592,7 +592,7 @@ export default {
     },
 
     deleteComment: function (id, index) {
-      let path = '/comments/' + id;
+      let path = '/userServer/comments/' + id;
       this.app.overlay = true;
       this.$axios.delete(path, {}).then(resp => {
         if (resp.data.code === 200) {

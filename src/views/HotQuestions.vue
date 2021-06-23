@@ -27,7 +27,7 @@ export default {
         return;
       this.app.overlay = true;
       this.questions = [];
-      this.axios.get('/hot-list', {})
+      this.axios.get('/userServer/hot-list', {})
         .then(resp => {
           if (resp.status === 200 && resp.data.code === 200) {
             this.questions = resp.data.data;
@@ -47,7 +47,7 @@ export default {
     },
 
     isQuestionFollowed: function (questionID, index) {
-      this.$axios.get('/questions/' + questionID + '/follows', {
+      this.$axios.get('/userServer/questions/' + questionID + '/follows', {
         params: {
           "question-id": questionID
         }
@@ -63,7 +63,7 @@ export default {
     },
 
     queryQuestionerNickname(questionerID, index) {
-      this.$axios.get('/users/' + questionerID, {
+      this.$axios.get('/userServer/users/' + questionerID, {
         params: {
           "user-id": questionerID
         }

@@ -202,7 +202,7 @@ export default {
 
       if (!this.formHasErrors) {
         this.app.overlay = true;
-        this.$axios.post('/users/register', {
+        this.$axios.post('/userServer/users/register', {
           address: this.address,
           email: this.email,
           gender: parseInt(this.gender),

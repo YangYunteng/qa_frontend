@@ -13,7 +13,7 @@ import FollowingQuestions from "@/views/FollowingQuestions";
 import HotQuestions from "@/views/HotQuestions";
 import SearchedQuestions from "@/views/SearchedQuestions";
 import QuestionDetails from "@/components/QuestionDetails";
-
+import SuggestionsView from "@/views/SuggestionsView";
 Vue.use(VueRouter)
 
 const routes = [
@@ -74,6 +74,11 @@ const routes = [
         name: 'QuestionDetails',
         component: QuestionDetails,
         props: true
+      },
+      {
+        path: 'suggestionsView',
+        name: 'SuggestionsView',
+        component: SuggestionsView,
       }
     ]
   },

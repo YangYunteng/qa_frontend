@@ -242,7 +242,7 @@ export default {
       })
     },
     async getData() {
-      await this.$axios.get('/hot-list', {
+      await this.$axios.get('/userServer/hot-list', {
         limit: 20
       }).then(async (resp) =>{
         if (resp.status === 200) {

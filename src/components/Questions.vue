@@ -82,7 +82,7 @@ export default {
     },
 
     followQuestion(questionID, index) {
-      let path = '/questions/' + questionID + '/follows';
+      let path = '/userServer/questions/' + questionID + '/follows';
       this.$axios.post(path, {}).then(resp => {
         if (resp.data.code === 200) {
           this.$set(this.questions[index], 'isFollowed', true);
@@ -92,7 +92,7 @@ export default {
       })
     },
     deleteQuestion(questionID, index) {
-      let path = '/questions/' + questionID;
+      let path = '/userServer/questions/' + questionID;
       this.$axios.delete(path, {}).then(resp => {
         if (resp.data.code === 200) {
           this.app.message("问题删除成功", 'success');
@@ -103,7 +103,7 @@ export default {
       })
     },
     cancelFollowQuestion(questionID, index) {
-      let path = '/questions/' + questionID + '/follows';
+      let path = '/userServer/questions/' + questionID + '/follows';
       this.$axios.delete(path, {}).then(resp => {
         if (resp.data.code === 200) {
           this.$set(this.questions[index], 'isFollowed', false);

@@ -163,12 +163,12 @@ export default {
     },
 
     getQuestionDetails: function (questionID) {
-      let path = '/questions/' + this.questionID;
+      let path = '/userServer/questions/' + this.questionID;
       this.$axios.get(path, {}).then(resp => {
         if (resp.status === 200 && resp.data.code === 200) {
           this.question = resp.data.data;
           this.questioner = this.question.questioner;
-          path = '/questions/' + this.questionID + '/follows';
+          path = '/userServer/questions/' + this.questionID + '/follows';
           this.$axios.get(path, {
             params: {
               "question-id": questionID,
@@ -189,7 +189,7 @@ export default {
     },
 
     followQuestion: function (questionID) {
-      let path = '/questions/' + questionID + '/follows';
+      let path = '/userServer/questions/' + questionID + '/follows';
       this.$axios.post(path, {}).then(resp => {
         if (resp.data.code === 200) {
           this.$set(this.question, 'isFollowed', true);
@@ -201,7 +201,7 @@ export default {
     },
 
     cancelFollowQuestion: function (questionID) {
-      let path = '/questions/' + questionID + '/follows';
+      let path = '/userServer/questions/' + questionID + '/follows';
       this.$axios.delete(path, {}).then(resp => {
         if (resp.data.code === 200) {
           this.$set(this.question, 'isFollowed', false);

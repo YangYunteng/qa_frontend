@@ -104,7 +104,7 @@ export default {
       this.checkForm();
       if (!this.formHasErrors) {
         this.app.overlay = true;
-        this.$axios.post('/users/login', {
+        this.$axios.post('/userServer/users/login', {
           password: this.password,
           username: this.username
         })
@@ -114,7 +114,7 @@ export default {
               if (code === 200) {
                 this.$store.commit('login', resp.data.data);
                 //this.app.message("登录成功",'success')
-                this.$axios.get('/users/curr', {
+                this.$axios.get('/userServer/users/curr', {
                   params: {}
                 })
                   .then(resp => {

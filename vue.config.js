@@ -1,18 +1,19 @@
 module.exports = {
+  publicPath: '/',
   devServer: {
     proxy: {
-      '/api': {
+      '/api/userServer': {
         target: 'http://localhost:8080',
         changeOrigin: true,
         pathRewrite: {
-          '^/api': ''
+          '^/api/userServer': '/'
         }
       },
-      '/api/ad': {
+      '/api/adminServer': {
         target: 'http://localhost:8081',
         changeOrigin: true,
         pathRewrite: {
-          '^/api': ''
+          '^/api/adminServer': '/'
         }
       }
     },

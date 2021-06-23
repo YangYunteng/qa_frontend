@@ -1,9 +1,9 @@
 <template>
   <v-container>
-    <mind-map style="width: 700px;
-            height: 400px;
-            margin:50px auto;
-            position: relative;"></mind-map>
+<!--    <mind-map style="width: 700px;-->
+<!--            height: 400px;-->
+<!--            margin:50px auto;-->
+<!--            position: relative;"></mind-map>-->
     <v-row justify="center">
       <h3 style="letter-spacing: 1px">您好, 亲爱的 {{ username }}<br class="d-md-none"></h3>
     </v-row>
@@ -17,17 +17,21 @@
 import MindMap from "@/components/MindMap";
 export default {
   name: "UserHomeWelcome",
-  components: {MindMap},
+  // components: {MindMap},
   data() {
     return {
       app: this.$root.$children[0],
     }
   },
   computed: {
+    isAdmin: function () {
+      return this.$store.state.userDetails.ID===11;
+    },
     username: function () {
       return this.$store.state.userDetails ? this.$store.state.userDetails.nickname : 'xxx';
     }
   }
+
 }
 </script>
 

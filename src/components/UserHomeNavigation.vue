@@ -5,7 +5,7 @@
       <v-col cols="2">
         <v-img max-width="250px" alt="Logo" src="../assets/logo.png" class="d-none d-inline-flex mt-1"></v-img>
       </v-col>
-      <v-col cols="4">
+      <v-col cols="4" v-if="!isAdmin">
         <v-row>
           <v-spacer></v-spacer>
           <v-col cols="11">
@@ -15,11 +15,23 @@
           </v-col>
         </v-row>
       </v-col>
-      <v-col cols="6">
+      <v-col cols="6" v-if="!isAdmin">
         <v-row>
           <v-spacer></v-spacer>
           <v-col cols="12" sm="12" md="12" lg="10" xl="9" class="d-sm-flex d-md-flex d-lg-flex d-xl-flex">
             <v-btn text v-for="(item,index) in menu" v-bind:key="index" @click="item.func">
+              <v-icon>{{ item.icon }}</v-icon>
+              <div class="d-none d-md-flex">{{ item.title }}</div>
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-col>
+      <v-spacer></v-spacer>
+      <v-col cols="3" v-if="isAdmin">
+        <v-row>
+          <v-spacer></v-spacer>
+          <v-col cols="12" sm="12" md="12" lg="10" xl="9" class="d-sm-flex d-md-flex d-lg-flex d-xl-flex">
+            <v-btn text v-for="(item,index) in adminMenu" v-bind:key="index" @click="item.func">
               <v-icon>{{ item.icon }}</v-icon>
               <div class="d-none d-md-flex">{{ item.title }}</div>
             </v-btn>
@@ -64,7 +76,6 @@ export default {
   components: {
     MarkdownInput,
   },
-  props: ["menu"],
   data() {
     return {
       app: this.$root.$children[0],
@@ -80,12 +91,19 @@ export default {
         {title: '用户', icon: 'mdi-account', func: this.toUserInfo},
         {title: '登出', icon: 'mdi-logout', func: this.logout}
       ],
-
-
+      adminMenu: [
+        {title: "首页", icon: 'mdi-home-outline', func: this.toUserHome},
+        {title: '建议', icon: 'mdi-comment-plus', func: this.toSuggestionsView},
+        {title: '登出', icon: 'mdi-logout', func: this.logout}
+      ]
     }
   },
+  computed: {
+    isAdmin: function () {
+      return this.$store.state.userDetails.ID===11;
+    },
+  },
   methods: {
-
     changeTheme: function () {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
       this.$store.commit('changeTheme', this.$vuetify.theme.dark);
@@ -95,7 +113,7 @@ export default {
       // let lastKey
       if (this.search !== '') {
         this.$router.push({
-          path: '/userHome/searchedQuestions/' + this.search,
+          path: '/userServer/userHome/searchedQuestions/' + this.search,
         }).catch(err => err)
       }
     },
@@ -164,7 +182,13 @@ export default {
         this.app.overlay = false;
       }
     },
-
+    toSuggestionsView: function () {
+      if (this.$route.path !== '/userHome/suggestionsView') {
+        this.$router.push({
+          path: '/userHome/suggestionsView'
+        }).catch(err => err)
+      }
+    },
     //切换到关注的问题界面
     toFollowingQuestions: function () {
       if (this.$route.path !== '/userHome/followingQuestions') {

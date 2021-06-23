@@ -35,7 +35,7 @@ export default {
       // console.log(this.search);
       this.app.overlay = true;
       this.questions = [];
-      this.axios.get('/questions', {
+      this.axios.get('/userServer/questions', {
           params: {
             search: this.search,
             pageNum: this.questionPage,
@@ -64,7 +64,7 @@ export default {
     },
 
     isQuestionFollowed: function (questionID, index) {
-      this.$axios.get('/questions/' + questionID + '/follows', {
+      this.$axios.get('/userServer/questions/' + questionID + '/follows', {
         params: {
           "question-id": questionID
         }
@@ -79,7 +79,7 @@ export default {
       })
     },
     queryQuestionerNickname(questionerID, index) {
-      this.$axios.get('/users/' + questionerID, {
+      this.$axios.get('/userServer/users/' + questionerID, {
         params: {
           "user-id": questionerID
         }
