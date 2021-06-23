@@ -1,6 +1,5 @@
 <template>
   <v-container>
-
     <mind-map style="width: 700px;
             height: 400px;
             margin:50px auto;

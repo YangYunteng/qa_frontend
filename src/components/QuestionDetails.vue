@@ -128,7 +128,7 @@ export default {
             this.answer = '';
             this.$refs.markdownInput.content = '';
             this.cancelAnswerDialog();
-            this.app.message('回答提交成功,正在进行数据库写入,请稍后查询', 'success');
+            this.app.message('回答提交成功', 'success');
             this.$refs.Answers.queryAnswers();
           } else {
             this.app.message("回答提交失败", 'warning');

@@ -1,5 +1,6 @@
 <template>
-  <v-app-bar absolute app  flat prominent color="rgb(255,255,255,0.2)" height="60" class="justify-center pt-2" style="z-index: 200">
+  <v-app-bar absolute app flat prominent color="rgb(255,255,255,0.2)" height="60" class="justify-center pt-2"
+             style="z-index: 200">
     <v-row>
       <v-col cols="2">
         <v-img max-width="250px" alt="Logo" src="../assets/logo.png" class="d-none d-inline-flex mt-1"></v-img>
@@ -18,7 +19,7 @@
         <v-row>
           <v-spacer></v-spacer>
           <v-col cols="12" sm="12" md="12" lg="10" xl="9" class="d-sm-flex d-md-flex d-lg-flex d-xl-flex">
-            <v-btn text v-for="(item,index) in menu" v-bind:key="index" @click="item.func" >
+            <v-btn text v-for="(item,index) in menu" v-bind:key="index" @click="item.func">
               <v-icon>{{ item.icon }}</v-icon>
               <div class="d-none d-md-flex">{{ item.title }}</div>
             </v-btn>
@@ -40,7 +41,8 @@
           </v-toolbar>
           <v-card-text class="mt-5">
             <v-text-field placeholder="" v-model="questionTitle" label="问题标题" outlined dense></v-text-field>
-            <MarkdownInput style="margin-top: -30px" @transformHtml="receiveHtml" ref="markdownInput" placeholder="问题描述...." ></MarkdownInput>
+            <MarkdownInput style="margin-top: -30px" @transformHtml="receiveHtml" ref="markdownInput"
+                           placeholder="问题描述...."></MarkdownInput>
           </v-card-text>
           <v-card-actions class="justify-end">
             <v-btn @click="submitQuestion" class="mb-4 mr-4" elevation="2" color="primary" depressed>提交</v-btn>
@@ -62,6 +64,7 @@ export default {
   components: {
     MarkdownInput,
   },
+  props: ["menu"],
   data() {
     return {
       app: this.$root.$children[0],
@@ -72,7 +75,6 @@ export default {
       menu: [
         {title: "首页", icon: 'mdi-home-outline', func: this.toUserHome},
         {title: "去提问", icon: 'mdi-frequently-asked-questions', func: this.openQuestionDialog},
-        {title: "关注", icon: 'mdi-cube-scan', func: this.toFollowingQuestions},
         {title: "热榜", icon: 'mdi-trophy', func: this.toHotQuestions},
         {title: "换肤", icon: 'mdi-image-multiple', func: this.changeTheme},
         {title: '用户', icon: 'mdi-account', func: this.toUserInfo},
@@ -94,7 +96,7 @@ export default {
       if (this.search !== '') {
         this.$router.push({
           path: '/userHome/searchedQuestions/' + this.search,
-        }).catch(err=>err)
+        }).catch(err => err)
       }
     },
 
@@ -103,7 +105,7 @@ export default {
       if (this.$route.path !== '/userHome/') {
         this.$router.push({
           path: '/userHome'
-        }).catch(err=>err)
+        }).catch(err => err)
       }
     },
 
@@ -168,7 +170,7 @@ export default {
       if (this.$route.path !== '/userHome/followingQuestions') {
         this.$router.push({
           path: '/userHome/followingQuestions'
-        }).catch(err=>err)
+        }).catch(err => err)
       }
     },
     //切换到热门问题界面
@@ -176,7 +178,7 @@ export default {
       if (this.$route.path !== '/userHome/hotQuestions') {
         this.$router.push({
           path: '/userHome/hotQuestions'
-        }).catch(err=>err)
+        }).catch(err => err)
       }
     },
 

@@ -40,7 +40,7 @@
             <v-icon left>mdi-comment-multiple-outline</v-icon>
             查看详情
           </v-btn>
-          <v-btn class="ml-3" color="error" v-if="canDelete(item.questionerID)" @click="toAnswerDetails(item.ID)">
+          <v-btn class="ml-3" color="error" v-if="canDelete(item.questionerID)" @click="deleteQuestion(item.ID,index)">
             <v-icon left>mdi-delete</v-icon>
             删除
           </v-btn>
@@ -91,8 +91,16 @@ export default {
         this.app.message('服务器在忙', 'red');
       })
     },
-    deleteQuestion(questionID) {
-
+    deleteQuestion(questionID, index) {
+      let path = '/questions/' + questionID;
+      this.$axios.delete(path, {}).then(resp => {
+        if (resp.data.code === 200) {
+          this.app.message("问题删除成功", 'success');
+          this.questions.splice(index, 1);
+        }
+      }).catch(() => {
+        this.app.message("服务器在忙", 'red');
+      })
     },
     cancelFollowQuestion(questionID, index) {
       let path = '/questions/' + questionID + '/follows';

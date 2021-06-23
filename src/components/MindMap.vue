@@ -228,7 +228,7 @@ export default {
           if (this.$store.state.token !== null) {
             temp.push({
               name: item.title,
-              url: '/userHome/answerDetails/' + item.ID,
+              url: '/userHome/questionDetails/' + item.ID,
               color: "rgb(" + this.getRandomNum() + "," + this.getRandomNum() + "," + this.getRandomNum() + ")"
             });
           } else {

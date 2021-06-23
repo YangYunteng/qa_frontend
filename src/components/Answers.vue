@@ -340,7 +340,7 @@ export default {
       this.app.overlay = true;
       this.$axios.delete(path, {}).then(resp => {
         if (resp.data.code === 200) {
-          this.app.message("删除成功,正在清除数据,请在一段时间后查询", 'success');
+          this.app.message("删除成功", 'success');
           // this.sleep(1000);
           this.answers.splice(index, 1);
         } else {

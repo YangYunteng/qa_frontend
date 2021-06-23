@@ -1,5 +1,13 @@
 <template>
-  <Questions ref="questions"></Questions>
+  <div>
+    <Questions ref="questions"></Questions>
+    <v-pagination
+      v-model="questionPage"
+      :length="questionPaginationLen"
+      :total-visible="6"
+      @input="searchQuestion"
+    ></v-pagination>
+  </div>
 </template>
 
 <script>
@@ -13,6 +21,9 @@ export default {
     return {
       app: this.$root.$children[0],
       questions: [],
+      questionPage: 1,
+      questionPaginationLen: 1,
+      questionPageSize: 5
     }
   },
   methods: {
@@ -27,12 +38,14 @@ export default {
       this.axios.get('/questions', {
           params: {
             search: this.search,
-            pageNum: 1,
-            pageSize: 5,
+            pageNum: this.questionPage,
+            pageSize: this.questionPageSize,
           }
         }
       )
         .then(resp => {
+          let questionTotal = resp.headers.totalcount;
+          this.questionPaginationLen = Math.ceil(questionTotal / this.questionPageSize);
           if (resp.status === 200 && resp.data.code === 200) {
             this.questions = resp.data.data;
             for (let i = 0; i < this.questions.length; i++) {
@@ -83,7 +96,6 @@ export default {
   },
   mounted() {
     this.searchQuestion();
-    //this.isQuestionFollowed(11)
   }
 }
 </script>
