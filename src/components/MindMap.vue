@@ -74,7 +74,7 @@ export default {
         let aTmp = [];
         let oFragment = document.createDocumentFragment();
         // 随机排序
-        for (let i = 0; i < this.tagList.length; i++) {
+        for (let i = 0; i < this.oA.length; i++) {
           aTmp.push(this.oA[i]);
         }
         aTmp.sort(() => {
@@ -182,7 +182,6 @@ export default {
     // 网络请求 拿到tagList
     async query() {
       await this.getData();
-      console.log(this.tagList)
       await this.onReady();
     },
     // 生成标签云
@@ -191,8 +190,8 @@ export default {
         this.oList = this.$refs.tagCloud;
         this.paper = document.querySelector(".tagCloud")
         this.oA = document.getElementsByTagName('a')
-        console.log(this.oA.length);
         let oTag = null;
+        this.mcList=[];
         for (let i = 0; i < this.oA.length; i++) {
           oTag = {};
           oTag.offsetWidth = this.oA[i].offsetWidth;
@@ -240,16 +239,12 @@ export default {
           }
         });
         this.tagList = temp;
-        //this.$forceUpdate();
-        console.log("data prepared"+this.tagList);
       })
     },
     async getData() {
-      console.log('getData');
       await this.$axios.get('/hot-list', {
         limit: 20
       }).then(async (resp) =>{
-        console.log(resp);
         if (resp.status === 200) {
           this.$store.commit('setUserData', resp.data.data);
           await this.doNext();
@@ -257,7 +252,6 @@ export default {
       })
     },
     onUpdate() {
-      console.log(this.input)
       this.query();
     }
   },
