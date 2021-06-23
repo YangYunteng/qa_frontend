@@ -7,8 +7,6 @@
             margin:50px auto;
             position: relative;">
       </MindMap>
-      {{counter}}
-
     </v-main>
     <HomeFooter></HomeFooter>
   </v-app>

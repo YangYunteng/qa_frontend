@@ -2,7 +2,8 @@
     <div class="tagCloud"
          ref="tagCloud"
           style="text-align:center; width: 700px;
-            height: 500px; position: absolute">
+            height: 500px; position: absolute"
+    >
       <a v-for="(item,index) in tagList" :href="item.url" :style="'color:' + item.color + ';top: 0;left: 0;filter:none;'" :key="index">
         {{item.name}}
       </a>
