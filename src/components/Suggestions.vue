@@ -399,10 +399,10 @@ export default {
     },
     querySuggestions: function () {
       let path = '/adminServer/admin/suggestions';
-      this.$axios.get(path, {
-        "pageNum": 1,
-        "pageSize": 5,
-      }).then(resp => {
+      this.$axios.get(path, {params:{
+        pageNum: 1,
+        pageSize: 5,
+      }}).then(resp => {
         console.log(resp);
       }).catch(() => {
         this.app.message("服务器在忙", 'red');

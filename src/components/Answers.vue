@@ -78,10 +78,11 @@
     <!-- 评论Dialog, 显示该问题的所有评论-->
     <v-dialog width="800px" v-model="isCommentDialogOn">
       <template>
-        <v-card min-height="600px" width="800px">
+        <v-card min-height="600px" width="800px" style="padding: 5px">
           <v-toolbar
             color="primary"
             dark
+            outlined
           >回答详情
           </v-toolbar>
           <v-card-text>
@@ -175,7 +176,7 @@
                 style="margin-top: 20px"
               ></v-pagination>
             </div>
-            <div v-if="commentTotal===0">
+            <div v-if="commentTotal==='0'">
               <v-row class="justify-center">
                 <v-col cols="4">
                   <v-img src="../assets/writeComment.png" alt="Logo" width="250px" height="189px"></v-img>

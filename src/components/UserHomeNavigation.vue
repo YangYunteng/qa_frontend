@@ -100,7 +100,7 @@ export default {
   },
   computed: {
     isAdmin: function () {
-      return this.$store.state.userDetails.ID===11;
+      return this.$store.state.userDetails.ID===6;
     },
   },
   methods: {
@@ -113,7 +113,7 @@ export default {
       // let lastKey
       if (this.search !== '') {
         this.$router.push({
-          path: '/userServer/userHome/searchedQuestions/' + this.search,
+          path: '/userHome/searchedQuestions/' + this.search,
         }).catch(err => err)
       }
     },
@@ -123,6 +123,14 @@ export default {
       if (this.$route.path !== '/userHome/') {
         this.$router.push({
           path: '/userHome'
+        }).catch(err => err)
+      }
+    },
+
+    toUserInfo: function () {
+      if (this.$route.path !== '/userInfo/') {
+        this.$router.push({
+          path: '/userHome/userInfo'
         }).catch(err => err)
       }
     },
@@ -160,7 +168,7 @@ export default {
       if (canPost) {
         //console.log("run")
         this.app.overlay = true;
-        this.$axios.post('/questions', {
+        this.$axios.post('/userServer/questions', {
           content: this.questionDescription,
           title: this.questionTitle
         }).then(resp => {
@@ -203,12 +211,6 @@ export default {
         this.$router.push({
           path: '/userHome/hotQuestions'
         }).catch(err => err)
-      }
-    },
-
-    toUserInfo: function () {
-      if (this.$route.path !== '/user/toUserInfo/') {
-        console.log("toUserInfo")
       }
     },
 
