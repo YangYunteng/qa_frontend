@@ -7,6 +7,7 @@ import Register from "@/views/Register";
 import UserHome from "@/views/UserHome";
 import Error from "@/views/Error";
 import UserHomeWelcome from "@/views/UserHomeWelcome";
+import UserInfo from "@/views/UserInfo";
 
 
 import FollowingQuestions from "@/views/FollowingQuestions";
@@ -79,6 +80,11 @@ const routes = [
         path: 'suggestionsView',
         name: 'SuggestionsView',
         component: SuggestionsView,
+      },
+      {
+        path: 'userInfo',
+        name: 'userInfo',
+        component: UserInfo,
       }
     ]
   },

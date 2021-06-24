@@ -101,7 +101,7 @@ export default {
   },
   computed: {
     isAdmin: function () {
-      return this.$store.state.userDetails.ID===11;
+      return this.$store.state.userDetails.ID===6;
     },
   },
   methods: {
@@ -126,6 +126,14 @@ export default {
       if (this.$route.path !== '/userHome/') {
         this.$router.push({
           path: '/userHome'
+        }).catch(err => err)
+      }
+    },
+
+    toUserInfo: function () {
+      if (this.$route.path !== '/userInfo/') {
+        this.$router.push({
+          path: '/userHome/userInfo'
         }).catch(err => err)
       }
     },
@@ -206,12 +214,6 @@ export default {
         this.$router.push({
           path: '/userHome/hotQuestions'
         }).catch(err => err)
-      }
-    },
-
-    toUserInfo: function () {
-      if (this.$route.path !== '/user/toUserInfo/') {
-        console.log("toUserInfo")
       }
     },
 

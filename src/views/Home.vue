@@ -1,15 +1,25 @@
 <template>
-  <v-app :class="app.backgroundStyle" id="home">
-    <HomeNavigation></HomeNavigation>
-    <v-main class="mt-8">
-      <MindMap style="width: 700px;
-            height: 500px;
-            margin:50px auto;
-            position: relative;">
-      </MindMap>
-    </v-main>
-    <HomeFooter></HomeFooter>
-  </v-app>
+  <div>
+    <v-app :class="app.backgroundStyle">
+      <HomeNavigation></HomeNavigation>
+      <v-main>
+        <v-app style="background-color: rgba(0,0,0,0);">
+          <v-navigation-drawer style="background-color: rgba(0,0,0,0); position: absolute; height: 90%; z-index: 2"><q-a-robot></q-a-robot></v-navigation-drawer>
+          <v-container>
+            <v-main class="mt-8">
+              <MindMap style="width: 600px;
+                    height: 400px;
+                    margin: 0 auto;
+                    position: relative;">
+              </MindMap>
+            </v-main>
+          </v-container>
+        </v-app>
+        <HomeFooter></HomeFooter>
+      </v-main>
+
+    </v-app>
+  </div>
 </template>
 
 <script>
@@ -17,10 +27,12 @@
 import HomeNavigation from "@/components/HomeNavigation";
 import HomeFooter from "@/components/HomeFooter";
 import MindMap from "@/components/MindMap";
+import QARobot from "@/components/QARobot/QARobot";
 
 export default {
   name: 'Home',
   components: {
+    QARobot,
     HomeNavigation,
     HomeFooter,
     MindMap
