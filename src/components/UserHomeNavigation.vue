@@ -101,7 +101,7 @@ export default {
   },
   computed: {
     isAdmin: function () {
-      return this.$store.state.userDetails.ID===11;
+      return this.$store.state.userDetails.ID===1;
     },
   },
   methods: {
