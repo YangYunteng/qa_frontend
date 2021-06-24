@@ -302,7 +302,7 @@ export default {
           formData.append("files", file, file.name);
         }
         this.$axios.post('/adminServer/admin/upload', formData).then(resp => {
-          if (resp.data.data) {
+          if (resp.data.code===200) {
             this.app.message('数据导入成功', "success");
           } else {
             this.app.message('数据导入失败，请注意文件格式', 'warning')

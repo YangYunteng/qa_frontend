@@ -31,7 +31,7 @@ export default {
   },
   computed: {
     isAdmin: function () {
-      return this.$store.state.userDetails.ID===6;
+      return this.$store.state.userDetails.ID===11;
     },
     username: function () {
       return this.$store.state.userDetails ? this.$store.state.userDetails.nickname : 'xxx';
