@@ -15,7 +15,7 @@
       <div style="text-align: center"><h3>最 近 活 动</h3></div><br>
       <div v-for="(o,index) in this.recentActivity" :key="index" style="margin: 1vh 2vh 3vh; padding: 1vh 5vh; text-align: center; background-color: white; border-radius: 5px">
         {{ (o.hasOwnProperty('text'))?o.text:setContent(o)}}
-        <span v-if="o.value" v-html="o.entity_id+' : '+o.value"></span>
+        <span v-if="o.value" v-html="o.entity_id+(o.value)?' : '+o.value:''"></span>
         <span v-else v-html="o.entity_id"></span>
       </div>
       <div class="text-center">
@@ -36,7 +36,6 @@ export default {
       recentActivity:[],
       currPage: 1,
       paginationSize: 5,
-      hasReachBottom: false
     }
   },
   mounted() {
@@ -67,6 +66,9 @@ export default {
         case 'update':
           s = '修改了 '
           break;
+        default:
+          s = o.action;
+          break;
       }
 
       let t='';
@@ -76,6 +78,12 @@ export default {
           break;
         case 'answer':
           t = '回答 '
+          break;
+        case 'suggestion':
+          t = '建议 '
+          break;
+        default:
+          t = o.entity;
           break;
       }
       return '在 '+this.getTime(o.recorded_at)+' '+s+t;
@@ -109,11 +117,8 @@ export default {
         this.$nextTick(()=> {
           if (resp.data.code === 200 && resp.data.data.length !== 0) {
             this.recentActivity = resp.data.data;
-            this.hasReachBottom = false;
           } else if (resp.data.code === 200 && resp.data.data.length === 0) {
             if (this.currPage!==1) this.currPage--;
-            this.hasReachBottom = true;
-            console.log(this.recentActivity)
             if (this.recentActivity.length === 0)
               this.recentActivity = [{text: '已经到底了哦'}]
             else this.app.message('已经到底了哦', 'blue');
