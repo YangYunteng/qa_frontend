@@ -1,29 +1,42 @@
 <template>
   <div>
-    <p>Hello Suggestions!</p>
+    <Suggestions :suggestions="suggestions" ref="Suggestions"></Suggestions>
   </div>
 </template>
 
 <script>
+import Suggestions from "@/components/Suggestions";
+
 export default {
   name: "SuggestionsView",
+  components: {Suggestions},
   data() {
     return {
       app: this.$root.$children[0],
+      suggestions: [
+        {
+          suggester_id: 10,
+          suggester_name: "yyy1",
+          content: "建议修改xxxxxxxx",
+          updated_at:""
+        },
+        {
+          suggester_id: 10,
+          suggester_name: "yyy1",
+          content: "建议修改xxxxxxxx"
+        },
+        {
+          suggester_id: 10,
+          suggester_name: "yyy1",
+          content: "建议修改xxxxxxxx"
+        },
+      ]
     }
   },
+  methods: {
+  },
   mounted() {
-    let path = '/adminServer/admin/suggestions';
-    this.$axios.get(path, {
-      pageNum: 1,
-      pageSize: 5,
-      orderBy: 'updated_at asc',
-      locked: false
-    }).then(resp => {
-      console.log(resp);
-    }).catch(() => {
-      this.app.message("服务器在忙", 'red');
-    })
+    this.$refs.Suggestions.querySuggestions();
   }
 }
 
