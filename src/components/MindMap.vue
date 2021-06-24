@@ -11,7 +11,7 @@
         class="input"
         outlined
         dense
-        placeholder="输入你的问题"
+        placeholder="今 日 热 榜"
         append-icon="mdi-magnify"
         @blur="onUpdate()"
         v-model="input"

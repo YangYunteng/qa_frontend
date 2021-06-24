@@ -118,7 +118,7 @@ export default {
       let canPost = this.judgeAnswerCanPost();
       if (canPost) {
         this.app.overlay = true;
-        let path = '/questions/' + this.question.ID + '/answers';
+        let path = '/userServer/questions/' + this.question.ID + '/answers';
         this.$axios.post(path,
           {
             "content": this.answer,
