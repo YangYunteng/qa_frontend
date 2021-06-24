@@ -7,16 +7,15 @@
       <a v-for="(item,index) in tagList" :href="item.url" :style="'color:' + item.color + ';top: 0;left: 0;filter:none;'" :key="index">
         {{item.name}}
       </a>
-      <v-text-field
+      <v-btn
         class="input"
         outlined
         dense
-        placeholder="今 日 热 榜"
         append-icon="mdi-magnify"
-        @blur="onUpdate()"
-        v-model="input"
+        @click="onUpdate()"
       >
-      </v-text-field>
+        今 日 热 榜
+      </v-btn>
     </div>
 </template>
 
@@ -48,8 +47,12 @@ export default {
       sc: 0,
       cc: 0,
       paper: null,
-      input: ''
+      input: '',
+      interval:0
     }
+  },
+  beforeDestroy(){
+    clearInterval(this.interval);
   },
   methods: {
     // 生成随机数
@@ -214,7 +217,7 @@ export default {
           this.mouseX /= 30;
           this.mouseY /= 30;
         }
-        setInterval(() => {
+        this.interval = setInterval(() => {
           this.update()
         }, 10);            // 定时器执行 不能写setInterval(this.update(), 30)
       })
@@ -252,7 +255,11 @@ export default {
       })
     },
     onUpdate() {
-      this.query();
+      if (this.$route.path !== '/userHome/hotQuestions') {
+        this.$router.push({
+          path: '/userHome/hotQuestions'
+        }).catch(err => err)
+      }
     }
   },
   created() {
