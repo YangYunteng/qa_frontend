@@ -1,12 +1,14 @@
 <template>
   <v-container>
-    <div class="list" id="list" ref="list" >
+    <div class="list" id="list" ref="list">
       <ul>
         <li v-for="(item,index) in msglist" :key="index">
           <user :id="item.id" :type="item.type" :content="item.content" v-if="item.me"></user>
           <div v-else>
-            <robot :id="item.id" :type="item.type" :content="item.content" ></robot>
-            <v-btn text color="blue" x-small @click="showSuggestionDialog = true" v-if="$store.state.token!==null">提供改进建议 &gt;</v-btn>
+            <robot :id="item.id" :type="item.type" :content="item.content"></robot>
+            <v-btn text color="blue" x-small @click="showSuggestionDialog = true" v-if="$store.state.token!==null">
+              提供改进建议 &gt;
+            </v-btn>
             <v-btn text color="blue" x-small @click="showSuggestionDialog = true" v-else disabled>登录后可提出建议 &gt;</v-btn>
           </div>
         </li>
@@ -57,8 +59,8 @@ Vue.directive('scroll', {
 
 export default {
   name: "QARobot",
-  components: { Robot, User},
-  data(){
+  components: {Robot, User},
+  data() {
     return {
       app: this.$root.$children[0],
       text: '',
@@ -69,13 +71,13 @@ export default {
         me: false
       }],
       timer: 0,
-      showSuggestionDialog:false,
+      showSuggestionDialog: false,
       suggestion: ''
     }
   },
   methods: {
-    scroll(){
-      let elm=document.getElementById('container');
+    scroll() {
+      let elm = document.getElementById('container');
       elm.scrollTop = elm.scrollHeight;
       console.log(elm.scrollHeight, elm.scrollTop);
     },
@@ -92,45 +94,46 @@ export default {
         this.text = ''
       }
     },
-    renderSuggestion(){
+    renderSuggestion() {
       console.log('render QAR')
     },
-    submitSuggestion(){
+    submitSuggestion() {
       console.log(this.judgeAnswerCanPost())
-      if (!this.judgeAnswerCanPost()) return ;
-      this.$axios.post('/userServer/suggestions',{
-        'content':this.suggestion
-      }).then((resp)=>{
+      if (!this.judgeAnswerCanPost()) return;
+      this.$axios.post('/userServer/suggestions', {
+        'content': this.suggestion
+      }).then((resp) => {
         console.log(resp);
-        if (resp.status===200){
-          if (resp.data.code===200 && resp.data.data.object_id.length!==0){
-            this.app.message('建议提交成功','green');
+        if (resp.status === 200) {
+          if (resp.data.code === 200 && resp.data.data.object_id.length !== 0) {
+            this.app.message('建议提交成功', 'green');
             this.showSuggestionDialog = false;
-            this.suggestion='';
+            this.suggestion = '';
           } else {
-            this.app.message('服务器开小差了','red');
+            this.app.message('服务器开小差了', 'red');
           }
         } else {
-          this.app.message('服务器开小差了','red');
+          this.app.message('服务器开小差了', 'red');
         }
       })
     },
-    cancelAnswerDialog(){
-      this.suggestion='';
+    cancelAnswerDialog() {
+      this.suggestion = '';
       this.showSuggestionDialog = false;
     },
     judgeAnswerCanPost() {
       console.log(this.suggestion);
-      if (this.suggestion.length ===0) {
-        this.app.message('建议不能为空','red');
+      if (this.suggestion.length === 0) {
+        this.app.message('建议不能为空', 'red');
         return false;
       }
       return true;
     },
     getResponse(text) {
-      this.$axios.get('/userServer/question-answer/'+text,{params:{question: text, limit: 3}}).then((resp)=>{
-        if (resp.data.code===200){
-          if (resp.data.data===null){
+      this.$axios.get('/userServer/question-answer/' + text, {params: {question: text, limit: 3}}).then((resp) => {
+        console.log(resp);
+        if (resp.data.code === 200) {
+          if (resp.data.data === null) {
             this.msglist.push({
               id: this.msglist[this.msglist.length - 1].id + 1,
               type: 1,
@@ -138,10 +141,14 @@ export default {
               me: false
             })
           } else {
+            let temp = '';
+            for (let res of resp.data.data) {
+              temp += res.subject + " " + res.predicate + " " + res.objects[0] + ";";
+            }
             this.msglist.push({
               id: this.msglist[this.msglist.length - 1].id + 1,
               type: 1,
-              content: resp.data.data,
+              content: temp,
               me: false
             })
           }
@@ -154,49 +161,51 @@ export default {
 </script>
 
 
-
 <style scoped lang="scss">
-  ul {
-    padding: 0;
-    margin: 0;
-    height: 80%;
-  }
+ul {
+  padding: 0;
+  margin: 0;
+  height: 80%;
+}
 
-  li {
-    list-style: none;
+li {
+  list-style: none;
 
-  }
+}
 
-  .list {
-    width: 100%;
-    height: 80%;
-    margin-bottom: 45px;
-  }
+.list {
+  width: 100%;
+  height: 80%;
+  margin-bottom: 45px;
+}
 
-  .bottom {
-    width: 100%;
-    bottom: 0;
-    position: fixed;
-  }
-  .line {
-    width: 100%;
-    height: 1px;
-  }
+.bottom {
+  width: 100%;
+  bottom: 0;
+  position: fixed;
+}
 
-  .input-send {
-    //position: absolute;
-    display: inline-flex;
-  }
-  .input {
-    padding-right: 10px;
-    flex: 1;
-  }
-  .send {
-    //width: 50%;
-    height: 30px;
-    margin-top: 7px;
-    margin-right: 10px;
-  }
+.line {
+  width: 100%;
+  height: 1px;
+}
+
+.input-send {
+  //position: absolute;
+  display: inline-flex;
+}
+
+.input {
+  padding-right: 10px;
+  flex: 1;
+}
+
+.send {
+  //width: 50%;
+  height: 30px;
+  margin-top: 7px;
+  margin-right: 10px;
+}
 
 
 </style>
