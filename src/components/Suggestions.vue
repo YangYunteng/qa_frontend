@@ -1,5 +1,14 @@
 <template>
   <v-container>
+    <v-row class="justify-center">
+      <v-col cols="6">
+        <v-file-input counter chips multiple label="大量数据导入,请导入前缀为spo,entity以及relation的csv文件" ref="file" outlined dense
+                      v-model="files" acce></v-file-input>
+      </v-col>
+      <v-col cols="3">
+        <v-btn color="primary" text @click="submitFiles">上传</v-btn>
+      </v-col>
+    </v-row>
     <v-card v-for="(item,index) in suggestions" :key="index" color="rgb(255,255,255,0.6)" class="mt-2" outlined
             min-height="50px">
       <v-row>
@@ -143,24 +152,77 @@
             <v-row style="margin-top: -20px">
               <v-col cols="2"><p>将添加的别名</p></v-col>
               <v-col cols="10">
-                <v-chip v-for="(item,index) in del_spo_value" :key="index" close @click:close="deleteDelSPO(index)">
-                  {{ item.subject }} {{ item.predicate }} {{ item.spo }}
+                <v-chip v-for="(item,index) in add_aliases_arr" :key="index" close
+                        @click:close="deleteAddAliase(index)">
+                  {{ item }}
                 </v-chip>
               </v-col>
             </v-row>
             <v-card-actions class="justify-end">
-              <v-btn class="mb-4 mr-4" elevation="2" color="primary" depressed @click="addDelSPO">添加</v-btn>
+              <v-btn class="mb-4 mr-4" elevation="2" color="primary" depressed @click="addAddAliase">添加</v-btn>
             </v-card-actions>
           </v-card>
-          <v-row v-if="operations[4].on">
-            <p>4</p>
-          </v-row>
-          <v-row v-if="operations[5].on">
-            <p>5</p>
-          </v-row>
-          <v-row v-if="operations[6].on">
-            <p>6</p>
-          </v-row>
+          <!-- 添加别名-->
+          <v-card v-if="operations[4].on">
+            <v-row class="justify-center">
+              <v-col cols="5">
+                <v-text-field v-model="del_aliases_primary" label="删除主名" dense
+                              ref="del_aliases_primary" outlined></v-text-field>
+              </v-col>
+
+              <v-col cols="5">
+                <v-text-field v-model="del_aliases_aliase" label="别名" dense
+                              ref="del_aliases_aliase" outlined></v-text-field>
+              </v-col>
+            </v-row>
+            <v-row style="margin-top: -20px">
+              <v-col cols="2"><p>将删除的别名</p></v-col>
+              <v-col cols="10">
+                <v-chip v-for="(item,index) in del_aliases_arr" :key="index" close
+                        @click:close="deleteDelAliase(index)">
+                  {{ item }}
+                </v-chip>
+              </v-col>
+            </v-row>
+            <v-card-actions class="justify-end">
+              <v-btn class="mb-4 mr-4" elevation="2" color="primary" depressed @click="addDelAliase">添加</v-btn>
+            </v-card-actions>
+          </v-card>
+          <!-- 添加新对象-->
+          <v-card v-if="operations[5].on">
+            <v-row class="justify-center">
+              <v-col cols="5">
+                <v-text-field v-model="add_object_primary" label="新对象主名" dense
+                              ref="add_object_primary" outlined></v-text-field>
+              </v-col>
+
+              <v-col cols="5">
+                <v-text-field v-model="add_object_aliase" label="别名" dense
+                              ref="add_object_aliase" outlined></v-text-field>
+              </v-col>
+            </v-row>
+            <v-row style="margin-top: -20px">
+              <v-col cols="2"><p>新对象的别名</p></v-col>
+              <v-col cols="10">
+                <v-chip v-for="(item,index) in add_object_aliases" :key="index" close
+                        @click:close="deleteObjAliase(index)">
+                  {{ item }}
+                </v-chip>
+              </v-col>
+            </v-row>
+            <v-card-actions class="justify-end">
+              <v-btn class="mb-4 mr-4" elevation="2" color="primary" depressed @click="addObjAliase">添加</v-btn>
+            </v-card-actions>
+          </v-card>
+          <!-- 删除对象-->
+          <v-card v-if="operations[6].on">
+            <v-row class="justify-center">
+              <v-col cols="6">
+                <v-text-field v-model="del_object_primary" label="删除对象主名" dense
+                              ref="del_object_primary" outlined></v-text-field>
+              </v-col>
+            </v-row>
+          </v-card>
         </v-card-text>
         <v-card-actions class="justify-end">
           <template v-for="(item,index) in operations">
@@ -181,6 +243,7 @@ export default {
   props: ["suggestions"],
   data() {
     return {
+      files: null,
       app: this.$root.$children[0],
       currPage: 1,
       PaginationLen: 1,
@@ -214,13 +277,15 @@ export default {
       new_primary: '',
       //添加别名
       add_aliases_primary: '',
-      add_aliases_aliase:'',
+      add_aliases_aliase: '',
       add_aliases_arr: [],
       //删除别名
       del_aliases_primary: '',
+      del_aliases_aliase: '',
       del_aliases_arr: [],
       //添加实体类
       add_object_primary: '',
+      add_object_aliase: '',
       add_object_aliases: [],
       //删除实体类
       del_object_primary: '',
@@ -230,12 +295,33 @@ export default {
 
   },
   methods: {
+    submitFiles() {
+      let formData = new FormData()
+      if (this.files) {
+        for (let file of this.files) {
+          formData.append("files", file, file.name);
+        }
+        this.$axios.post('/adminServer/admin/upload', formData).then(resp => {
+          if(resp.data.data){
+            this.app.message('数据导入成功', "success");
+          }else{
+            this.app.message('数据导入失败，请注意文件格式','warning')
+          }
+          console.log(resp)
+        }).catch(error => {
+          console.log(error)
+        })
+      } else {
+        this.app.message("请选择相关文件", 'warning');
+      }
+    },
     chooseOperation: function (index) {
       for (let i = 0; i < this.operations.length; i++) {
         this.$set(this.operations[i], "on", false);
       }
       this.$set(this.operations[index], "on", true);
     },
+
     //添加三元组
     addAddSPO: function () {
       if (this.add_spo_object === '' || this.add_spo_subject === '' || this.add_spo_predicate === '')
@@ -270,23 +356,25 @@ export default {
         "relation",
         "spo"
       ];
-      commit.opt_type = "add_spo";
+      commit.operation = "add_spo";
       commit.value = this.add_spo_value;
       let commands = [];
       commands.push(commit);
-      console.log(commands);
       let path = '/adminServer/admin/commit';
       this.$axios.post(path,
         {
           "commands": commands,
           "comment": this.comment,
-          "suggester_id": this.suggestion.suggester_id
+          "suggester_id": this.suggestion.suggester_id + ""
         }).then(resp => {
-        console.log(resp);
+        if (resp.data.code === 200) {
+          this.app.message("修改成功", 'success');
+        } else {
+          this.app.message("修改失败", 'error');
+        }
       }).catch(() => {
         this.app.message("服务器在忙", 'red');
       })
-      console.log(this.add_spo_value);
     },
     openDialog: function (item, index) {
       this.suggestion = item;
@@ -295,6 +383,7 @@ export default {
     closeDialog: function () {
       this.isDialogOn = false;
     },
+
     //删除三元组
     addDelSPO: function () {
       if (this.del_spo_object === '' || this.del_spo_subject === '' || this.del_spo_predicate === '')
@@ -312,6 +401,7 @@ export default {
     deleteDelSPO: function (index) {
       this.del_spo_value.splice(index, 1);
     },
+
     commit_spo_del: function () {
       if (this.comment === '') {
         this.app.message("评论不能为空", 'warning');
@@ -327,24 +417,27 @@ export default {
         "relation",
         "spo"
       ];
-      commit.opt_type = "del_spo";
+      commit.operation = "del_spo";
       commit.value = this.del_spo_value;
       let commands = [];
       commands.push(commit);
-      console.log(commands);
       let path = '/adminServer/admin/commit';
       this.$axios.post(path,
         {
           "commands": commands,
           "comment": this.comment,
-          "suggester_id": this.suggestion.suggester_id
+          "suggester_id": this.suggestion.suggester_id + ""
         }).then(resp => {
-        console.log(resp);
+        if (resp.data.code === 200) {
+          this.app.message("修改成功", 'success');
+        } else {
+          this.app.message("修改失败", 'warning');
+        }
       }).catch(() => {
         this.app.message("服务器在忙", 'red');
       })
-      console.log(this.del_spo_value);
     },
+
     //替换主名
     commit_replace_primary: function () {
       if (this.comment === '') {
@@ -352,7 +445,7 @@ export default {
         return;
       }
       if (this.old_primary === '' || this.new_primary === '') {
-        this.app.message("主名为填写完成", 'warning');
+        this.app.message("主名未全部填写", 'warning');
         return;
       }
       let commands = [];
@@ -360,31 +453,200 @@ export default {
       command.col_names = [
         "entity"
       ];
-      command.opt_type = "replace_primary";
+      command.operation = "replace_primary";
       command.value = {
         "old": this.old_primary,
         "new": this.new_primary
       }
+      commands.push(command)
       let path = '/adminServer/admin/commit';
-      this.$axios.post(path, {}).then(resp => {
-
+      this.$axios.post(path, {
+        "commands": commands,
+        "comment": this.comment,
+        "suggester_id": this.suggestion.suggester_id + "",
+      }).then(resp => {
+        if (resp.data.code === 200) {
+          this.app.message("修改成功", 'success');
+        } else {
+          this.app.message("修改失败", "warning");
+        }
       }).catch(() => {
         this.app.message('服务器在忙', 'red');
       })
     },
 
-
+    //添加别名
+    deleteAddAliase: function (index) {
+      this.add_aliases_arr.splice(index, 1);
+    },
+    addAddAliase: function () {
+      if (this.add_aliases_aliase === '')
+        return;
+      this.add_aliases_arr.push(this.add_aliases_aliase);
+      this.add_aliases_aliase = '';
+    },
     commit_add_aliases: function () {
-
+      if (this.comment === '') {
+        this.app.message("评论不能为空", 'warning');
+        return;
+      }
+      if (this.add_aliases_primary === '' || this.add_aliases_arr.length === 0) {
+        this.app.message("主名或别名未填写", 'warning');
+        return;
+      }
+      let commands = [];
+      let command = {};
+      command.col_names = [
+        "entity"
+      ];
+      command.operation = "add_aliases";
+      command.value = {
+        "primary": this.add_aliases_primary,
+        "aliases": this.add_aliases_arr
+      }
+      commands.push(command)
+      let path = '/adminServer/admin/commit';
+      this.$axios.post(path, {
+        "commands": commands,
+        "comment": this.comment,
+        "suggester_id": this.suggestion.suggester_id + "",
+      }).then(resp => {
+        if (resp.data.code === 200) {
+          this.app.message("修改成功", 'success');
+        } else {
+          this.app.message("修改失败", 'warning');
+        }
+      }).catch(() => {
+        this.app.message('服务器在忙', 'red');
+      })
     },
+
+    //删除别名
+    deleteDelAliase: function (index) {
+      this.del_aliases_arr.splice(index, 1);
+    },
+    addDelAliase: function () {
+      if (this.del_aliases_aliase === '')
+        return;
+      this.del_aliases_arr.push(this.del_aliases_aliase);
+      this.del_aliases_aliase = '';
+    },
+
     commit_del_aliases: function () {
-
+      if (this.comment === '') {
+        this.app.message("评论不能为空", 'warning');
+        return;
+      }
+      if (this.del_aliases_primary === '' || this.del_aliases_arr.length === 0) {
+        this.app.message("主名或别名未填写", 'warning');
+        return;
+      }
+      let commands = [];
+      let command = {};
+      command.col_names = [
+        "entity"
+      ];
+      command.operation = "del_aliases";
+      command.value = {
+        "primary": this.del_aliases_primary,
+        "aliases": this.del_aliases_arr
+      }
+      commands.push(command)
+      let path = '/adminServer/admin/commit';
+      this.$axios.post(path, {
+        "commands": commands,
+        "comment": this.comment,
+        "suggester_id": this.suggestion.suggester_id + "",
+      }).then(resp => {
+        if (resp.data.code === 200) {
+          this.app.message("修改成功", 'success');
+        } else {
+          this.app.message("修改失败", 'warning');
+        }
+      }).catch(() => {
+        this.app.message('服务器在忙', 'red');
+      })
     },
+
+    //新增对象
+    deleteObjAliase: function (index) {
+      this.add_object_aliases.splice(index, 1);
+    },
+
+    addObjAliase: function () {
+      if (this.add_object_aliase === '')
+        return;
+      this.add_object_aliases.push(this.add_object_aliase);
+      this.add_object_aliase = '';
+    },
+
     commit_add_primary_aliases: function () {
-
+      if (this.comment === '') {
+        this.app.message("评论不能为空", 'warning');
+        return;
+      }
+      if (this.add_object_primary === '' || this.add_object_aliases.length === 0) {
+        this.app.message("主名或别名未填写", 'warning');
+        return;
+      }
+      let commands = [];
+      let command = {};
+      command.col_names = [
+        "entity"
+      ];
+      command.operation = "add_primary_aliases";
+      command.value = {
+        "primary": this.add_object_primary,
+        "aliases": this.add_object_aliases
+      }
+      commands.push(command)
+      let path = '/adminServer/admin/commit';
+      this.$axios.post(path, {
+        "commands": commands,
+        "comment": this.comment,
+        "suggester_id": this.suggestion.suggester_id + "",
+      }).then(resp => {
+        if (resp.data.code === 200) {
+          this.app.message("修改成功", 'success');
+        } else {
+          this.app.message("修改失败", 'warning');
+        }
+      }).catch(() => {
+        this.app.message('服务器在忙', 'red');
+      })
     },
-    commit_del_primary_aliases: function () {
 
+    commit_del_primary_aliases: function () {
+      if (this.comment === '') {
+        this.app.message("评论不能为空", 'warning');
+        return;
+      }
+      if (this.del_object_primary === '') {
+        this.app.message("主名未填写", 'warning');
+        return;
+      }
+      let commands = [];
+      let command = {};
+      command.col_names = [
+        "entity"
+      ];
+      command.operation = "del_primary_aliases";
+      command.value = this.del_object_primary;
+      commands.push(command)
+      let path = '/adminServer/admin/commit';
+      this.$axios.post(path, {
+        "commands": commands,
+        "comment": this.comment,
+        "suggester_id": this.suggestion.suggester_id + "",
+      }).then(resp => {
+        if (resp.data.code === 200) {
+          this.app.message("修改成功", 'success');
+        } else {
+          this.app.message("修改失败", 'warning');
+        }
+      }).catch(() => {
+        this.app.message('服务器在忙', 'red');
+      })
     },
     getTime: function (date) {
       date = new Date(date);
@@ -397,11 +659,16 @@ export default {
       res += this.timeComplement(date.getSeconds(), 2);
       return res;
     },
+
     querySuggestions: function () {
+      let pageNum = parseInt(this.pageNum);
+      let pageSize = parseInt(this.pageSize);
       let path = '/adminServer/admin/suggestions';
       this.$axios.get(path, {
-        "pageNum": 1,
-        "pageSize": 5,
+        params: {
+          pageNum: this.currPage,
+          pageSize: this.pageSize,
+        }
       }).then(resp => {
         console.log(resp);
       }).catch(() => {

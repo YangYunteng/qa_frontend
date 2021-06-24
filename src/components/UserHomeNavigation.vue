@@ -27,7 +27,7 @@
         </v-row>
       </v-col>
       <v-spacer></v-spacer>
-      <v-col cols="3" v-if="isAdmin">
+      <v-col cols="4" v-if="isAdmin">
         <v-row>
           <v-spacer></v-spacer>
           <v-col cols="12" sm="12" md="12" lg="10" xl="9" class="d-sm-flex d-md-flex d-lg-flex d-xl-flex">
@@ -93,6 +93,7 @@ export default {
       ],
       adminMenu: [
         {title: "首页", icon: 'mdi-home-outline', func: this.toUserHome},
+        {title: "换肤", icon: 'mdi-image-multiple', func: this.changeTheme},
         {title: '建议', icon: 'mdi-comment-plus', func: this.toSuggestionsView},
         {title: '登出', icon: 'mdi-logout', func: this.logout}
       ]
@@ -113,7 +114,7 @@ export default {
       // let lastKey
       if (this.search !== '') {
         this.$router.push({
-          path: '/userServer/userHome/searchedQuestions/' + this.search,
+          path: '/userHome/searchedQuestions/' + this.search,
         }).catch(err => err)
       }
     },
@@ -160,7 +161,7 @@ export default {
       if (canPost) {
         //console.log("run")
         this.app.overlay = true;
-        this.$axios.post('/questions', {
+        this.$axios.post('/userServer/questions', {
           content: this.questionDescription,
           title: this.questionTitle
         }).then(resp => {
