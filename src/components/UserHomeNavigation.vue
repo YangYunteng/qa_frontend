@@ -111,11 +111,13 @@ export default {
     },
     //前往搜索问题界面
     toSearchedQuestions: function () {
+      console.log("temp")
       // let lastKey
       if (this.search !== '') {
-        this.$router.push({
+        this.$router.replace({
           path: '/userHome/searchedQuestions/' + this.search,
-        }).catch(err => err)
+        }).catch(err=>err)
+        this.$router.go(0);
       }
     },
 

@@ -1,11 +1,11 @@
 <template>
   <div>
     <Questions ref="questions"></Questions>
-    <v-pagination
-      v-model="questionPage"
-      :length="questionPaginationLen"
-      :total-visible="6"
-      @input="searchQuestion"
+    <v-pagination v-if="questionTotal!=0"
+                  v-model="questionPage"
+                  :length="questionPaginationLen"
+                  :total-visible="6"
+                  @input="searchQuestion"
     ></v-pagination>
   </div>
 </template>
@@ -21,6 +21,7 @@ export default {
     return {
       app: this.$root.$children[0],
       questions: [],
+      questionTotal: 0,
       questionPage: 1,
       questionPaginationLen: 1,
       questionPageSize: 5
@@ -45,6 +46,7 @@ export default {
       )
         .then(resp => {
           let questionTotal = resp.headers.totalcount;
+          console.log(questionTotal);
           this.questionPaginationLen = Math.ceil(questionTotal / this.questionPageSize);
           if (resp.status === 200 && resp.data.code === 200) {
             this.questions = resp.data.data;
@@ -57,8 +59,8 @@ export default {
             this.$refs.questions.transferData(this.questions);
           }
         })
-        .catch(() => {
-          this.app.message("服务器在忙", 'red');
+        .catch(error => {
+          console.log(error);
         })
       this.app.overlay = false;
     },

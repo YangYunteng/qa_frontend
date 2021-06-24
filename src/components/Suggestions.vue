@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row class="justify-center">
-      <v-col cols="6">
+      <v-col cols="5">
         <v-file-input counter chips multiple label="大量数据导入,请导入前缀为spo,entity以及relation的csv文件" ref="file" outlined dense
                       v-model="files" acce></v-file-input>
       </v-col>
@@ -13,7 +13,7 @@
             min-height="50px">
       <v-row>
         <v-col cols="5">
-          <b>建议提出者: {{ item.suggester_name }}: </b>
+          <b>建议提出者: {{ item.suggester_name }}</b>
         </v-col>
         <v-spacer></v-spacer>
         <v-col>
@@ -39,7 +39,7 @@
         <v-col cols="3"><b>提交时间</b>: 2021-4-21 12:30:12</v-col>
       </v-row>
     </v-card>
-    <div class="text-center">
+    <div class="text-center" v-if="suggestions.length!=0">
       <v-pagination
         v-model="currPage"
         :length="PaginationLen"
@@ -240,9 +240,9 @@
 <script>
 export default {
   name: "Suggestions",
-  props: ["suggestions"],
   data() {
     return {
+      suggestions: [],
       files: null,
       app: this.$root.$children[0],
       currPage: 1,
@@ -302,10 +302,10 @@ export default {
           formData.append("files", file, file.name);
         }
         this.$axios.post('/adminServer/admin/upload', formData).then(resp => {
-          if(resp.data.data){
+          if (resp.data.data) {
             this.app.message('数据导入成功', "success");
-          }else{
-            this.app.message('数据导入失败，请注意文件格式','warning')
+          } else {
+            this.app.message('数据导入失败，请注意文件格式', 'warning')
           }
           console.log(resp)
         }).catch(error => {
@@ -329,7 +329,7 @@ export default {
       let value = {
         "subject": this.add_spo_subject,
         "predicate": this.add_spo_predicate,
-        "spo": this.add_spo_object
+        "object": this.add_spo_object
       };
       this.add_spo_value.push(value);
       this.add_spo_object = '';
@@ -382,6 +382,34 @@ export default {
     },
     closeDialog: function () {
       this.isDialogOn = false;
+      //添加三元组
+      this.comment = '';
+      this.add_spo_subject = '';
+      this.add_spo_predicate = '';
+      this.add_spo_object = '';
+      this.add_spo_value = [];
+      //删除三元组
+      this.del_spo_subject = '';
+      this.del_spo_predicate = '';
+      this.del_spo_object = '';
+      this.del_spo_value = [];
+      //替换主名
+      this.old_primary = '';
+      this.new_primary = '';
+      //添加别名
+      this.add_aliases_primary = '';
+      this.add_aliases_aliase = '';
+      this.add_aliases_arr = [];
+      //删除别名
+      this.del_aliases_primary = '';
+      this.del_aliases_aliase = '';
+      this.del_aliases_arr = [];
+      //添加实体类
+      this.add_object_primary = '';
+      this.add_object_aliase = '';
+      this.add_object_aliases = [];
+      //删除实体类
+      this.del_object_primary = '';
     },
 
     //删除三元组
@@ -391,7 +419,7 @@ export default {
       let value = {
         "subject": this.del_spo_subject,
         "predicate": this.del_spo_predicate,
-        "spo": this.del_spo_object
+        "object": this.del_spo_object
       };
       this.del_spo_value.push(value);
       this.del_spo_object = '';
@@ -664,6 +692,7 @@ export default {
       let pageNum = parseInt(this.pageNum);
       let pageSize = parseInt(this.pageSize);
       let path = '/adminServer/admin/suggestions';
+      this.app.overlay = true;
       this.$axios.get(path, {
         params: {
           pageNum: this.currPage,
@@ -671,6 +700,33 @@ export default {
         }
       }).then(resp => {
         console.log(resp);
+        if (resp.data.code === 200) {
+          if (resp.data.data != null) {
+            for (let temp of resp.data.data) {
+              let suggestion = {};
+              suggestion.content = temp.content;
+              suggestion.updated_at = temp.updated_at;
+              suggestion.created_at = temp.created_at;
+              suggestion.suggester_id = temp.user_id;
+              this.suggestions.push(suggestion);
+            }
+            for (let i = 0; i < this.suggestions.length; i++) {
+              let path = '/userServer/users/' + this.suggestions[i].suggester_id;
+              this.$axios.get(path, {}).then(resp => {
+                if (resp.data.code === 200) {
+                  this.$set(this.suggestions[i], 'suggester_name', resp.data.data.nickname);
+                } else {
+                  this.$set(this.suggestions[i], 'suggester_name', '未知');
+                }
+              }).catch(error => {
+                console.log(error);
+              })
+            }
+          } else {
+            this.app.message('尚未有意见', 'warning');
+          }
+        }
+        this.app.overlay = false;
       }).catch(() => {
         this.app.message("服务器在忙", 'red');
       })
