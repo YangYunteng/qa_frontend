@@ -45,10 +45,9 @@ export default {
         }
       )
         .then(resp => {
-          let questionTotal = resp.headers.totalcount;
-          console.log(questionTotal);
-          this.questionPaginationLen = Math.ceil(questionTotal / this.questionPageSize);
-          if (resp.status === 200 && resp.data.code === 200) {
+          this.questionTotal = resp.headers.totalcount;
+          this.questionPaginationLen = Math.ceil(this.questionTotal / this.questionPageSize);
+          if (resp.status === 200 && resp.data.code === 200 && this.questionTotal > 0) {
             this.questions = resp.data.data;
             for (let i = 0; i < this.questions.length; i++) {
               let questionID = this.questions[i].ID;
@@ -57,6 +56,8 @@ export default {
               this.queryQuestionerNickname(questionerID, i);
             }
             this.$refs.questions.transferData(this.questions);
+          } else {
+            this.app.message("无相关问题，快去提问吧", "success");
           }
         })
         .catch(error => {
