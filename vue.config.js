@@ -3,14 +3,14 @@ module.exports = {
   devServer: {
     proxy: {
       '/api/userServer': {
-        target: 'http://54.85.190.217:8080',
+        target: 'http://localhost:8080',
         changeOrigin: true,
         pathRewrite: {
           '^/api/userServer': '/'
         }
       },
       '/api/adminServer': {
-        target: 'http://54.85.190.217:8081',
+        target: 'http://localhost:8081',
         changeOrigin: true,
         pathRewrite: {
           '^/api/adminServer': '/'
