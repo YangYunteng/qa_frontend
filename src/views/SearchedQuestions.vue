@@ -41,6 +41,7 @@ export default {
             search: this.search,
             pageNum: this.questionPage,
             pageSize: this.questionPageSize,
+            orderBy:'score desc',
           }
         }
       )
