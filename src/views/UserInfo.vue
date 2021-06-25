@@ -77,24 +77,24 @@ export default {
       switch (o.entity) {
         case 'question':
           t = '问题 '
-          content = (o.value) ? o.value : ""
+          content = (o.value) ? o.value+'...' : ""
           break;
         case 'answer':
           t = '回答 '
-          content = (o.value) ? o.value : ""
+          content = (o.value) ? o.value+'...' : ""
           break;
         case 'suggestion':
           t = '建议 '
           break;
         case 'comment':
           t = '评论 ';
-          content = (o.value.content) ? o.value.content : ""
+          content = (o.value.content) ? o.value.content+'...' : ""
           break;
         default:
           t = o.entity;
           break;
       }
-      return '<span>在 ' + this.getTime(o.recorded_at) + ' ' + s + t + content + '</span>';
+      return '在 ' + this.getTime(o.recorded_at) + ' ' + s + t + content;
     },
     getTime: function (date) {
       date = new Date(date);
