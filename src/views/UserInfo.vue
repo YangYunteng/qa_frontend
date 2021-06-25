@@ -14,9 +14,9 @@
     <v-card style="margin: 5vh 5vh; padding: 1vh 2vh;  background-color: rgba(255,255,255,0.3)" outlined>
       <div style="text-align: center"><h3>最 近 活 动</h3></div><br>
       <div v-for="(o,index) in this.recentActivity" :key="index" style="margin: 1vh 2vh 3vh; padding: 1vh 5vh; text-align: center; background-color: white; border-radius: 5px">
-        {{ (o.hasOwnProperty('text'))?o.text:setContent(o)}}
-        <span v-if="o.value" v-html="o.entity_id+(o.value)?' : '+o.value:''"></span>
-        <span v-else v-html="o.entity_id"></span>
+<!--        <span :id="index"></span>-->
+        <div>{{ (o.hasOwnProperty('text'))?o.text:setContent(o,index)}}</div>
+<!--        <span v-else v-html="o.entity_id"></span>-->
       </div>
       <div class="text-center">
         <v-btn outlined style="margin: 5px"  @click="prevPage">&lt;</v-btn>
@@ -54,8 +54,8 @@ export default {
       this.currPage--;
       this.queryRecentActivity();
     },
-    setContent(o){
-      let s='';
+    setContent(o,index) {
+      let s = '';
       switch (o.action) {
         case 'create':
           s = '创建了 '
@@ -71,22 +71,30 @@ export default {
           break;
       }
 
-      let t='';
+      let t = '';
+      let content = '';
+      console.log(index);
       switch (o.entity) {
         case 'question':
           t = '问题 '
+          content = (o.value) ? o.value : ""
           break;
         case 'answer':
           t = '回答 '
+          content = (o.value) ? o.value : ""
           break;
         case 'suggestion':
           t = '建议 '
+          break;
+        case 'comment':
+          t = '评论 ';
+          content = (o.value.content) ? o.value.content : ""
           break;
         default:
           t = o.entity;
           break;
       }
-      return '在 '+this.getTime(o.recorded_at)+' '+s+t;
+      return '<span>在 ' + this.getTime(o.recorded_at) + ' ' + s + t + content + '</span>';
     },
     getTime: function (date) {
       date = new Date(date);
