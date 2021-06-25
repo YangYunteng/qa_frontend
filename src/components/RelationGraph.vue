@@ -1,12 +1,12 @@
 <template>
-  <div class="echartLayout" style="width:100%; height:100%; overflow:hidden;">
-    <div id="container" style="width:100%; height:100%; overflow:hidden;"></div>
+  <div class="echartLayout">
+    <div id="container" style="height: 100vh; width: 100vh;"></div>
   </div>
 </template>
 
 <script>
 import echarts from 'echarts'
-import QARobot from "@/components/QARobot/QARobot";
+import imgSrc from './../assets/logo.png'
 export default {
   name: "RelationGraph",
   props: ['question'],
@@ -14,7 +14,8 @@ export default {
     return {
       myChart: null,
       chartData: [],
-      chartLink: []
+      chartLink: [],
+      index1: 0
     }
   },
   mounted() {
@@ -26,35 +27,38 @@ export default {
 
     async showMapDialogue(question) {
       this.showMapDialog = true;
-      await this.$axios.get('/userServer/question-answer/' + question, {
-        limit: 10
-      }).then(async (resp) => {
+      await this.$axios.get('/userServer/question-answer/' + question,  {params: {question: question, limit: 10}}).then(async (resp) => {
         if (resp.status === 200) {
           let graphdata = [];
           let graphDataLink = [];
+          console.log('resp: ',resp.data);
           this.$store.commit('setUserData2', resp.data.data);
-          await this.$nextTick(async () => {
+          await this.$nextTick(() => {
             console.log(this.$store.getters.getUserData2);
-            let ans = this.$store.getters.getUserData2;
+            let ans = resp.data.data;
 
             if (ans == null || ans.length === 0) {
               graphdata.push({name: '还没有数据哦！', id: '1', symbolSize: 76});
             } else {
               graphdata.push({name: ans[0].subject, id: '1', symbolSize: 76})
-              let index=0;
+              console.log('ans: ',ans)
+
               ans.forEach((item) => {
+                console.log('item',item);
                 item.objects.forEach((o)=>{
-                  index++;
-                  graphdata.push({name: o, id: String.valueOf(index + 2)});
-                  graphDataLink.push({value: item.predicate, source: '1', target: String.valueOf(index + 2)})
+                  this.index1++;
+                  console.log('o:'+ o);
+                  graphdata.push({name: o, id:(this.index1 + 2).toString()});
+                  graphDataLink.push({value: item.predicate, source: '1', target: (this.index1+ 2).toString()})
                 })
               })
             }
+            console.log(graphdata);
+            console.log(graphDataLink);
+            this.chartData = graphdata;
+            this.chartLink = graphDataLink;
           })
-          console.log(graphdata);
-          console.log(graphDataLink);
-          this.chartData = graphdata;
-          this.chartLink = graphDataLink;
+
         }
       })
     },
@@ -101,7 +105,7 @@ export default {
               }
             },
             //头像
-            symbol: `https://img.zcool.cn/community/01b0645a112c1ea80121985c0ea3d0.jpg@1280w_1l_2o_100sh.jpg`,
+            //symbol: `image://${imgSrc}`,
             symbolSize: 86,
             type: 'graph',
             links: this.chartLink,
@@ -110,10 +114,6 @@ export default {
         ]
       };
       this.myChart.setOption(option);
-      this.myChart.on('click', function (params) {
-        console.log(params.data)//获取点击的头像的数据信息
-      });
-
     },
   }
 }
@@ -121,7 +121,7 @@ export default {
 
 <style scoped>
 .echartLayout {
-  margin: auto;
+  margin: 0;
   position: absolute;
   top: 0;
   left: 0;

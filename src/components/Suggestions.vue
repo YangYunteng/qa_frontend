@@ -699,7 +699,7 @@ export default {
       let pageNum = parseInt(this.pageNum);
       let pageSize = parseInt(this.pageSize);
       let path = '/adminServer/admin/suggestions';
-      this.app.overlay = true;
+      // this.app.overlay = true;
       await this.$axios.get(path, {
         params: {
           pageNum: this.currPage,
@@ -707,7 +707,7 @@ export default {
         }
       }).then(resp => {
         if (resp.data.code === 200) {
-          if (resp.data.data != null && resp.data.data.length !== 0) {
+          if (resp.data.data != null) {
             for (let temp of resp.data.data) {
               let suggestion = {};
               suggestion.content = temp.content;
@@ -728,15 +728,16 @@ export default {
                 console.log(error);
               })
             }
-          } else if(resp.data.code===200 && (resp.data.data==null || resp.data.data.length===0)){
-            if(this.currPage!==1) this.currPage--;
+          } else if (resp.data.code === 200 && resp.data.data == null) {
+            if (this.currPage !== 1) this.currPage--;
             this.app.message('意见到底了', 'warning');
           }
         }
-        this.app.overlay = false;
+        // this.app.overlay = false;
       }).catch(() => {
         this.app.message("服务器在忙", 'red');
       })
+      // this.app.overlay = true;
     }
   }
 }

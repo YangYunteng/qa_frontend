@@ -54,19 +54,19 @@
     <v-dialog
       persistent
       max-width="800px"
-      min-width="600px"
+      height="700px"
       v-model="showMapDialog"
     >
       <template>
-        <v-card>
+        <v-card style="height: 100vh">
           <v-toolbar
             color="primary"
             dark
           >可视化
           </v-toolbar>
-          <div id="container" style="width:100%; height:100%; overflow:hidden;"></div>
-          <relation-graph :question="question"></relation-graph>
+
         <v-card-actions class="justify-end">
+          <relation-graph :question="question"></relation-graph>
         <v-btn class="mb-4 mr-4" elevation="2" color="primary" depressed @click="showMapDialog = false">OK</v-btn>
         </v-card-actions>
         </v-card>
