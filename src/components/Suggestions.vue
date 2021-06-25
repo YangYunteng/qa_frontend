@@ -308,7 +308,9 @@ export default {
         for (let file of this.files) {
           formData.append("files", file, file.name);
         }
+        this.app.overlay = true;
         this.$axios.post('/adminServer/admin/upload', formData).then(resp => {
+          this.app.overlay = false;
           if (resp.data.code === 200) {
             this.app.message('数据导入成功', "success");
           } else {
