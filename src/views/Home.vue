@@ -10,7 +10,7 @@
               <MindMap style="width: 600px;
                     height: 400px;
                     margin: 0 auto;
-                    position: relative;">
+                    position: relative;" question="" :query-state="1" :middle-button="true">
               </MindMap>
             </v-main>
           </v-container>

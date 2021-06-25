@@ -9,6 +9,7 @@
       {{ item.name }}
     </a>
     <v-btn
+      v-if="middleButton"
       class="input"
       outlined
       dense
@@ -23,6 +24,7 @@
 <script>
 export default {
   name: "MindMap",
+  props:['queryState', 'middleButton','question'],
   data() {
     return {
       tagList: [],
@@ -57,6 +59,7 @@ export default {
   },
   methods: {
     toQuestionDetails: function (url) {
+      if (url)
       this.$router.push({
         path: url,
       }).catch(err => err)
@@ -228,10 +231,19 @@ export default {
         }, 10);            // 定时器执行 不能写setInterval(this.update(), 30)
       })
     },
-    async doNext() {
+    async doNext(data) {
+
       this.$nextTick(() => {
+        console.log(data);
         let temp = [];
-        let data = this.$store.getters.getUserData;
+
+        if (data==null || data.length===0) {
+          temp.push({
+            name: '暂时没有数据',
+            color: "rgb(" + this.getRandomNum() + "," + this.getRandomNum() + "," + this.getRandomNum() + ")"
+          })
+          return ;
+        }
         data.forEach((item, index) => {
           if (this.$store.state.token !== null) {
             temp.push({
@@ -251,14 +263,31 @@ export default {
       })
     },
     async getData() {
-      await this.$axios.get('/userServer/hot-list', {
-        limit: 20
-      }).then(async (resp) => {
-        if (resp.status === 200) {
-          this.$store.commit('setUserData', resp.data.data);
-          await this.doNext();
-        }
-      })
+      console.log(this.queryState, this.question, this.middleButton)
+      if (this.queryState === 1) {
+        await this.$axios.get('/userServer/hot-list', {
+          limit: 20
+        }).then(async (resp) => {
+          if (resp.status === 200) {
+            this.$store.commit('setUserData', resp.data.data);
+            await this.$nextTick(()=>{
+              this.doNext(this.$store.getters.getUserData);
+            })
+          }
+        })
+      } else if (this.queryState === 2) {
+        await this.$axios.get('/userServer/question-answer/'+this.question, {
+          limit:10
+        }).then(async (resp) => {
+          if (resp.status === 200) {
+            this.$store.commit('setUserData2', resp.data.data);
+            await this.$nextTick(()=>{
+              console.log(this.$store.getters.getUserData2);
+              this.doNext(this.$store.getters.getUserData2);
+            })
+          }
+        })
+      }
     },
     onUpdate() {
       if (this.$route.path !== '/userHome/hotQuestions') {

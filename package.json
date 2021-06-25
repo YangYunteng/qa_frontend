@@ -10,6 +10,7 @@
   "dependencies": {
     "@mdi/font": "5.9.55",
     "core-js": "^3.6.5",
+    "echarts": "^4.9.0",
     "mavon-editor": "^2.9.1",
     "relation-graph": "^1.1.0",
     "roboto-fontface": "*",

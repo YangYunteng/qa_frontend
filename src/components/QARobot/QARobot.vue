@@ -3,13 +3,20 @@
     <div class="list" id="list" ref="list">
       <ul>
         <li v-for="(item,index) in msglist" :key="index">
-          <user :id="item.id" :type="item.type" :content="item.content" v-if="item.me"></user>
+          <div v-if="item.me">
+            <user :id="item.id" :type="item.type" :content="item.content"></user>
+            <v-btn text color="blue" x-small @click="showMapDialogue(item.content)" style="margin-right: 60px; display: flex; flex-direction: row-reverse">
+              可视化 &gt;
+            </v-btn>
+          </div>
           <div v-else>
             <robot :id="item.id" :type="item.type" :content="item.content"></robot>
             <v-btn text color="blue" x-small @click="showSuggestionDialog = true" v-if="$store.state.token!==null">
               提供改进建议 &gt;
             </v-btn>
+
             <v-btn text color="blue" x-small @click="showSuggestionDialog = true" v-else disabled>登录后可提出建议 &gt;</v-btn>
+
           </div>
         </li>
       </ul>
@@ -43,6 +50,28 @@
         </v-card>
       </template>
     </v-dialog>
+
+    <v-dialog
+      persistent
+      max-width="800px"
+      min-width="600px"
+      v-model="showMapDialog"
+    >
+      <template>
+        <v-card>
+          <v-toolbar
+            color="primary"
+            dark
+          >可视化
+          </v-toolbar>
+          <div id="container" style="width:100%; height:100%; overflow:hidden;"></div>
+          <relation-graph :question="question"></relation-graph>
+        <v-card-actions class="justify-end">
+        <v-btn class="mb-4 mr-4" elevation="2" color="primary" depressed @click="showMapDialog = false">OK</v-btn>
+        </v-card-actions>
+        </v-card>
+      </template>
+    </v-dialog>
   </v-container>
 
 </template>
@@ -50,6 +79,7 @@
 import Vue from "vue";
 import User from "@/components/QARobot/User";
 import Robot from "@/components/QARobot/Robot";
+import RelationGraph from "@/components/RelationGraph";
 
 Vue.directive('scroll', {
   inserted(el) {
@@ -59,7 +89,7 @@ Vue.directive('scroll', {
 
 export default {
   name: "QARobot",
-  components: {Robot, User},
+  components: { Robot, User, RelationGraph},
   data() {
     return {
       app: this.$root.$children[0],
@@ -72,10 +102,17 @@ export default {
       }],
       timer: 0,
       showSuggestionDialog: false,
-      suggestion: ''
+      suggestion: '',
+      showMapDialog : false,
+      question:  ''
     }
   },
   methods: {
+    showMapDialogue(question){
+      this.showMapDialog = true;
+      this.question = question;
+    },
+
     scroll() {
       let elm = document.getElementById('container');
       elm.scrollTop = elm.scrollHeight;

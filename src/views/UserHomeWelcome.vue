@@ -5,7 +5,7 @@
         <mind-map style="width: 700px;
           height: 400px;
           margin:50px auto 50px;
-          display: flex;"></mind-map>
+          display: flex;" question="" :query-state="1" :middle-button="true"></mind-map>
         <v-row justify="center">
           <h3 style="letter-spacing: 1px">您好, 亲爱的 {{ username }}<br></h3>
         </v-row>
