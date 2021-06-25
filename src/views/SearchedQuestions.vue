@@ -41,14 +41,14 @@ export default {
             search: this.search,
             pageNum: this.questionPage,
             pageSize: this.questionPageSize,
-            orderBy:'score desc',
+            orderBy: 'score desc',
           }
         }
       )
         .then(resp => {
           this.questionTotal = resp.headers.totalcount;
           this.questionPaginationLen = Math.ceil(this.questionTotal / this.questionPageSize);
-          if (resp.status === 200 && resp.data.code === 200 && this.questionTotal > 0) {
+          if (resp.status === 200 && resp.data.code === 200 && resp.data.data != null) {
             this.questions = resp.data.data;
             for (let i = 0; i < this.questions.length; i++) {
               let questionID = this.questions[i].ID;
@@ -78,8 +78,8 @@ export default {
         } else {
           this.$set(this.questions[index], 'isFollowed', resp.data.data);
         }
-      }).catch(() => {
-        this.app.message('服务器在忙', 'red');
+      }).catch(err => {
+        console.log(err)
       })
     },
     queryQuestionerNickname(questionerID, index) {
@@ -93,8 +93,8 @@ export default {
         } else {
           this.$set(this.questions[index], 'questionerNickname', '未知');
         }
-      }).catch(() => {
-        this.app.message('服务器在忙', 'red');
+      }).catch(err => {
+        console.log(err);
       })
     }
   },
