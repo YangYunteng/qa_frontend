@@ -3,7 +3,7 @@
     <v-row class="justify-center">
       <v-col cols="5">
         <v-file-input counter chips multiple label="大量数据导入,请导入前缀为spo,entity以及relation的csv文件" ref="file" outlined dense
-                      v-model="files" acce></v-file-input>
+                      v-model="files" accept=".csv,.json"></v-file-input>
       </v-col>
       <v-col cols="3">
         <v-btn color="primary" text @click="submitFiles">上传</v-btn>
