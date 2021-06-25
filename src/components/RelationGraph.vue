@@ -41,13 +41,14 @@ export default {
               graphdata.push({name: '还没有数据哦！', id: '1', symbolSize: 76});
             } else {
               graphdata.push({name: ans[0].subject, id: '1', symbolSize: 76})
-
-              ans.forEach((item, index) => {
-                graphdata.push({name: item.object, id: String.valueOf(index + 2)});
-                graphDataLink.push({value: item.object, source: '1', target: String.valueOf(index + 2)})
-
+              let index=0;
+              ans.forEach((item) => {
+                item.objects.forEach((o)=>{
+                  index++;
+                  graphdata.push({name: o, id: String.valueOf(index + 2)});
+                  graphDataLink.push({value: item.predicate, source: '1', target: String.valueOf(index + 2)})
+                })
               })
-
             }
           })
           console.log(graphdata);
