@@ -29,7 +29,7 @@ export default {
       this.questions = [];
       this.axios.get('/userServer/hot-list', {})
         .then(resp => {
-          if (resp.status === 200 && resp.data.code === 200) {
+          if (resp.status === 200 && resp.data.code === 200 && resp.data.data != null) {
             this.questions = resp.data.data;
             for (let i = 0; i < this.questions.length; i++) {
               let questionID = this.questions[i].ID;
@@ -38,6 +38,8 @@ export default {
               this.queryQuestionerNickname(questionerID, i);
             }
             this.$refs.questions.transferData(this.questions);
+          } else {
+            this.app.message('目前没有热点问题', "warning");
           }
           this.app.overlay = false;
         })

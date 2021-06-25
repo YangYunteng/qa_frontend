@@ -1,22 +1,23 @@
 <template>
-    <div class="tagCloud"
-         ref="tagCloud"
-          style="text-align:center; width: 700px;
+  <div class="tagCloud"
+       ref="tagCloud"
+       style="text-align:center; width: 700px;
             height: 500px; display: flex"
+  >
+    <a v-for="(item,index) in tagList" @click="toQuestionDetails(item.url)"
+       :style="'color:' + item.color + ';top: 0;left: 0;filter:none;'" :key="index">
+      {{ item.name }}
+    </a>
+    <v-btn
+      class="input"
+      outlined
+      dense
+      append-icon="mdi-magnify"
+      @click="onUpdate()"
     >
-      <a v-for="(item,index) in tagList" :href="item.url" :style="'color:' + item.color + ';top: 0;left: 0;filter:none;'" :key="index">
-        {{item.name}}
-      </a>
-      <v-btn
-        class="input"
-        outlined
-        dense
-        append-icon="mdi-magnify"
-        @click="onUpdate()"
-      >
-        今 日 热 榜
-      </v-btn>
-    </div>
+      今 日 热 榜
+    </v-btn>
+  </div>
 </template>
 
 <script>
@@ -48,13 +49,18 @@ export default {
       cc: 0,
       paper: null,
       input: '',
-      interval:0
+      interval: 0
     }
   },
-  beforeDestroy(){
+  beforeDestroy() {
     clearInterval(this.interval);
   },
   methods: {
+    toQuestionDetails: function (url) {
+      this.$router.push({
+        path: url,
+      }).catch(err => err)
+    },
     // 生成随机数
     getRandomNum() {
       return Math.floor(Math.random() * (155 + 1) + 50);
@@ -194,7 +200,7 @@ export default {
         this.paper = document.querySelector(".tagCloud")
         this.oA = document.getElementsByTagName('a')
         let oTag = null;
-        this.mcList=[];
+        this.mcList = [];
         for (let i = 0; i < this.oA.length; i++) {
           oTag = {};
           oTag.offsetWidth = this.oA[i].offsetWidth;
@@ -247,7 +253,7 @@ export default {
     async getData() {
       await this.$axios.get('/userServer/hot-list', {
         limit: 20
-      }).then(async (resp) =>{
+      }).then(async (resp) => {
         if (resp.status === 200) {
           this.$store.commit('setUserData', resp.data.data);
           await this.doNext();
@@ -275,6 +281,7 @@ export default {
 .tagCloud {
   position: relative;
 }
+
 .tagCloud a {
   position: absolute;
   top: 0;
@@ -284,13 +291,20 @@ export default {
   text-decoration: none;
   padding: 3px 6px;
 }
+
 .tagCloud a:hover {
   color: #FF0000;
   border: 2px solid white;
 }
+
 .input {
-  width: 25%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 25%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
+
 .input:focus-within {
   width: 50%;
 }

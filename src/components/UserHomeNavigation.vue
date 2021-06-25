@@ -111,7 +111,6 @@ export default {
     },
     //前往搜索问题界面
     toSearchedQuestions: function () {
-      console.log("temp")
       // let lastKey
       if (this.search !== '') {
         this.$router.replace({
@@ -166,10 +165,8 @@ export default {
     submitQuestion: function () {
       if (this.app.overlay === true)
         return;
-      //console.log(this.judgeQuestionCanPost());
       let canPost = this.judgeQuestionCanPost();
       if (canPost) {
-        //console.log("run")
         this.app.overlay = true;
         this.$axios.post('/userServer/questions', {
           content: this.questionDescription,
