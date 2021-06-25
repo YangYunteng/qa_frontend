@@ -39,13 +39,9 @@
         <v-col cols="3"><b>提交时间</b>: 2021-4-21 12:30:12</v-col>
       </v-row>
     </v-card>
-    <div class="text-center" v-if="suggestions.length!=0">
-      <v-pagination
-        v-model="currPage"
-        :length="PaginationLen"
-        :total-visible="6"
-        @input="querySuggestions"
-      ></v-pagination>
+    <div class="text-center">
+      <v-btn outlined style="margin: 5px" @click="prevPage">&lt;</v-btn>
+      <v-btn outlined style="margin: 5px" @click="nextPage">&gt;</v-btn>
     </div>
 
     <!-- 对回答和评论进行评论的Dialog -->
@@ -246,7 +242,6 @@ export default {
       files: null,
       app: this.$root.$children[0],
       currPage: 1,
-      PaginationLen: 1,
       pageSize: 5,
       comment: '',
       suggestion: {},
@@ -295,6 +290,18 @@ export default {
 
   },
   methods: {
+    nextPage() {
+      this.currPage++;
+      this.querySuggestions();
+    },
+    prevPage() {
+      if (this.currPage === 1) {
+        this.app.message('已经到头了哦', 'blue');
+        return;
+      }
+      this.currPage--;
+      this.querySuggestions();
+    },
     submitFiles() {
       let formData = new FormData()
       if (this.files) {
@@ -302,7 +309,7 @@ export default {
           formData.append("files", file, file.name);
         }
         this.$axios.post('/adminServer/admin/upload', formData).then(resp => {
-          if (resp.data.code===200) {
+          if (resp.data.code === 200) {
             this.app.message('数据导入成功', "success");
           } else {
             this.app.message('数据导入失败，请注意文件格式', 'warning')
@@ -688,20 +695,19 @@ export default {
       return res;
     },
 
-    querySuggestions: function () {
+    querySuggestions: async function () {
       let pageNum = parseInt(this.pageNum);
       let pageSize = parseInt(this.pageSize);
       let path = '/adminServer/admin/suggestions';
       this.app.overlay = true;
-      this.$axios.get(path, {
+      await this.$axios.get(path, {
         params: {
           pageNum: this.currPage,
           pageSize: this.pageSize,
         }
       }).then(resp => {
-        console.log(resp);
         if (resp.data.code === 200) {
-          if (resp.data.data != null) {
+          if (resp.data.data != null && resp.data.data.length !== 0) {
             for (let temp of resp.data.data) {
               let suggestion = {};
               suggestion.content = temp.content;
@@ -722,8 +728,9 @@ export default {
                 console.log(error);
               })
             }
-          } else {
-            this.app.message('尚未有意见', 'warning');
+          } else if(resp.data.code===200 && (resp.data.data==null || resp.data.data.length===0)){
+            if(this.currPage!==1) this.currPage--;
+            this.app.message('意见到底了', 'warning');
           }
         }
         this.app.overlay = false;
